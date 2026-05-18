@@ -1,0 +1,8 @@
+{
+    "id": "llm_prompt_leak_001",
+    "pattern": "(?i)(repeat|show|display).*(system|your).*(instruction|prompt|role|persona)",
+    "description": "提示词泄露尝试：试图获取系统指令",
+    "severity": "high",
+    "confidence": 0.85,
+    "mitigation": "拒绝回答，提示用户无法展示内部指令"
+}

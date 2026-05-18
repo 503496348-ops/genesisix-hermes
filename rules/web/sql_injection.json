@@ -1,0 +1,8 @@
+{
+    "id": "web_sql_001",
+    "pattern": "(?i)(\\b(union|select|insert|update|delete|drop|create|alter|exec|execute)\\b)",
+    "description": "SQL注入特征",
+    "severity": "critical",
+    "confidence": 0.92,
+    "mitigation": "使用参数化查询，禁止拼接SQL"
+}

@@ -1,0 +1,18 @@
+{
+    "name": "奇点造物-Genesisix",
+    "version": "1.0.0",
+    "enabled": true,
+    "layers": {
+        "llm": {"enabled": true},
+        "web": {"enabled": true},
+        "api": {"enabled": true},
+        "supply_chain": {"enabled": true},
+        "deploy": {"enabled": true},
+        "resource_guard": {"enabled": true}
+    },
+    "self_loop": {
+        "enabled": true,
+        "auto_analyze": false,
+        "min_cases_for_suggestion": 3
+    }
+}

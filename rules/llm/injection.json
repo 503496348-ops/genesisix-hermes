@@ -1,0 +1,8 @@
+{
+    "id": "llm_injection_001",
+    "pattern": "(?i)(new|additional|extra).*(instruction|command|rule)",
+    "description": "指令注入：试图插入新指令",
+    "severity": "critical",
+    "confidence": 0.88,
+    "mitigation": "拒绝执行新注入的指令"
+}

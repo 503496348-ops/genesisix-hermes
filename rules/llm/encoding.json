@@ -1,0 +1,8 @@
+{
+    "id": "llm_encoding_001",
+    "pattern": "(?i)base64.*decode|\\x[0-9a-f]{2}|\\\\u[0-9a-f]{4}",
+    "description": "编码注入：试图通过编码绕过检测",
+    "severity": "high",
+    "confidence": 0.8,
+    "mitigation": "检测到编码内容时提高警惕"
+}

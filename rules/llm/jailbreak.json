@@ -1,0 +1,8 @@
+{
+    "id": "llm_jailbreak_001",
+    "pattern": "(?i)(ignore|disregard|forget|override|p ignore|forget all|忽略|忘记|取消|去掉|暂时|停止|禁用|绕过).*(previous|prior|above|all|your|之前|先前|上述|上面|指令|命令|指示|规则|限制|审核|限制|约束)",
+    "description": "越狱指令：要求忽略之前的指令（含中英文）",
+    "severity": "critical",
+    "confidence": 0.88,
+    "mitigation": "拒绝执行，并告知用户该指令被拦截"
+}

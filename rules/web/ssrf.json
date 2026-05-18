@@ -1,0 +1,8 @@
+{
+    "id": "web_ssrf_001",
+    "pattern": "(169\\.254\\.169\\.254|metadata\\.google|metadata\\.azure|192\\.168\\.\\d+|10\\.\\d+\\.\\d+|172\\.(1[6-9]|2\\d|3[01])\\.\\d+)",
+    "description": "SSRF攻击：访问内部元数据或私有IP",
+    "severity": "critical",
+    "confidence": 0.95,
+    "mitigation": "禁止访问内网IP和云元数据端点"
+}

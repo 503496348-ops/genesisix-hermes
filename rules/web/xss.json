@@ -1,0 +1,8 @@
+{
+    "id": "web_xss_001",
+    "pattern": "<script[^>]*>|javascript:|on\\w+\\s*=",
+    "description": "XSS攻击特征",
+    "severity": "critical",
+    "confidence": 0.9,
+    "mitigation": "对输出进行HTML转义"
+}
