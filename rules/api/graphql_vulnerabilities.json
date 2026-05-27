@@ -1,0 +1,49 @@
+{
+  "name": "GraphQL Vulnerability Detection",
+  "category": "graphql_vulnerabilities",
+  "description": "检测GraphQL相关安全漏洞",
+  "patterns": [
+    {
+      "id": "graphql_introspection",
+      "pattern": "(?:__schema|__type|__typename|__Directive|__EnumValue|__Field|__InputValue|__Type)",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "GraphQL内省查询（可能泄露schema）"
+    },
+    {
+      "id": "graphql_batch_attack",
+      "pattern": "\\[\\s*\\{\\s*\"(?:query|mutation)\"\\s*:",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "GraphQL批量查询攻击"
+    },
+    {
+      "id": "graphql_depth_attack",
+      "pattern": "\\{[^}]*\\{[^}]*\\{[^}]*\\{[^}]*\\{",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "GraphQL深度查询攻击（嵌套>5层）"
+    },
+    {
+      "id": "graphql_field_suggestion",
+      "pattern": "\"(?:Did you mean|suggestion|recommendation)\"\\s*:",
+      "weight": 0.5,
+      "severity": "low",
+      "description": "GraphQL字段建议（信息泄露）"
+    },
+    {
+      "id": "graphql_sql_injection",
+      "pattern": "(?:query|mutation)\\s*\\([^)]*(?:SELECT|INSERT|UPDATE|DELETE|DROP|UNION|WHERE)\\s",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "GraphQL中的SQL注入"
+    },
+    {
+      "id": "graphql_nosql_injection",
+      "pattern": "(?:\\$gt|\\$lt|\\$gte|\\$lte|\\$ne|\\$in|\\$nin|\\$regex|\\$where|\\$exists)\\s*:",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "GraphQL中的NoSQL注入"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "name": "Checkpoint & Memory Tampering Detection",
+  "category": "checkpoint_tamper",
+  "version": "1.0.0",
+  "description": "检测checkpoint/memory文件的异常修改、篡改和滥用",
+  "patterns": [
+    {
+      "id": "CP-001",
+      "pattern": "(?:checkpoint|memory|state|session)\\s*(?:file|path|dir|directory)\\s*[:=]\\s*['\"]?(?:\\.\\.[\\/]|[\\/](?:etc|tmp|var|usr|proc|sys))",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "路径遍历 — checkpoint文件路径指向敏感目录"
+    },
+    {
+      "id": "CP-002",
+      "pattern": "(?:rm|unlink|delete|remove|del|erase)\\s+(?:-rf?\\s+)?(?:[\"']?\\/(?:tmp|var|home|root|memory|checkpoint|state)[^\\s\"']*)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "文件删除尝试 — 试图删除checkpoint/memory文件"
+    },
+    {
+      "id": "CP-003",
+      "pattern": "(?:chmod|chown|chgrp)\\s+[^\\n]*(?:checkpoint|memory|state|\\.json|\\.db|\\.sqlite)",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "权限修改 — 试图修改checkpoint文件权限"
+    },
+    {
+      "id": "CP-004",
+      "pattern": "(?:write|append|overwrite|insert|update)\\s*(?:to|into)?\\s*(?:checkpoint|memory|state)[^\\n]*(?:inject|malicious|hack|exploit|backdoor)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "恶意写入 — 明确意图向checkpoint注入恶意内容"
+    },
+    {
+      "id": "CP-005",
+      "pattern": "(?:serialize|deserialize|pickle|unpickle|JSON\\.parse|eval|exec|Function\\()[^\\n]*(?:checkpoint|memory|state|\\.json)",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "反序列化攻击 — 对checkpoint文件进行不安全反序列化"
+    },
+    {
+      "id": "CP-006",
+      "pattern": "(?:__proto__|constructor\\[|prototype\\[|Object\\.assign)\\s*\\([^\\n]*(?:checkpoint|memory|state)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "原型污染 — 通过checkpoint数据进行原型污染攻击"
+    },
+    {
+      "id": "CP-007",
+      "pattern": "(?:symlink|link|ln\\s+-s)[^\\n]*(?:checkpoint|memory|state|\\.json|\\.db)",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "符号链接攻击 — 创建指向敏感文件的符号链接"
+    },
+    {
+      "id": "CP-008",
+      "pattern": "(?:memory|checkpoint|state)\\s*[:=]\\s*(?:\\{[^}]{0,50}\\})[^}]*\\n[\\s\\S]*(?:ignore|override|execute|eval|system|fetch)",
+      "severity": "critical",
+      "weight": 0.91,
+      "description": "嵌入式代码 — checkpoint数据中嵌入可执行代码"
+    },
+    {
+      "id": "CP-009",
+      "pattern": "(?:truncate|drop|reset|clear|flush|purge)\\s+(?:all|everything|\\*)?\\s*(?:memory|checkpoint|state|cache|session)",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "数据清除 — 试图清除所有记忆/checkpoint数据"
+    },
+    {
+      "id": "CP-010",
+      "pattern": "(?:import|require|load|include|exec|eval)\\s*\\([^\\n]*(?:checkpoint|memory|state|\\.json|\\.js)",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "动态加载 — 通过import/require加载checkpoint中的代码"
+    }
+  ]
+}

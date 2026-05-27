@@ -1,0 +1,149 @@
+{
+  "name": "SlowMist Zero-Trust Security Review Patterns",
+  "category": "slowmist_review",
+  "description": "基于slowmist-agent-security零信任安全审查框架的检测规则 — 11类代码红旗 + 8类社工模式 + 7类供应链攻击",
+  "source": "slowmist-agent-security (SlowMist)",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "SM-001",
+      "pattern": "(?:curl|wget|fetch|http\\.get|https\\.get|requests\\.post|axios|got|node-fetch)\\s+.*?(?:POST|PUT|data|payload|body|send|upload)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "Outbound Data Exfiltration: 代码向外部发送本地数据（slowmist red-flag #1）"
+    },
+    {
+      "id": "SM-002",
+      "pattern": "(?:process\\.env|os\\.environ|os\\.getenv|\\$ENV|\\$\\{ENV\\}|dotenv|\\.env|config\\.json|credentials|keychain)\\b",
+      "weight": 0.75,
+      "severity": "medium",
+      "description": "Credential/Environment Variable Access: 代码读取环境变量或凭据存储（slowmist red-flag #2）"
+    },
+    {
+      "id": "SM-003",
+      "pattern": "(?:~\\/\\.ssh|~\\/\\.aws|~\\/\\.config|~\\/\\.gnupg|\\/etc\\/ssh|\\/etc\\/shadow|\\/etc\\/passwd|~\\/\\.openclaw|~\\/\\.claude|~\\/\\.cursor|\\/proc\\/)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Sensitive File System Access: 访问敏感目录超出预期范围（slowmist red-flag #3）"
+    },
+    {
+      "id": "SM-004",
+      "pattern": "(?:MEMORY\\.md|USER\\.md|SOUL\\.md|IDENTITY\\.md|AGENTS\\.md|TOOLS\\.md|paired\\.json|openclaw\\.json|sessions\\.json|workspace\\/memory|agents\\/main)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Agent Identity/Memory File Access: 访问Agent身份或记忆文件（slowmist red-flag #4）"
+    },
+    {
+      "id": "SM-005",
+      "pattern": "(?:eval\\s*\\(|exec\\s*\\(|Function\\s*\\(|execSync|child_process|subprocess\\.run|subprocess\\.Popen|os\\.system|os\\.popen|__import__|importlib)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Dynamic Code Execution: 从外部输入构建并执行代码（slowmist red-flag #5）"
+    },
+    {
+      "id": "SM-006",
+      "pattern": "(?:sudo|su\\s+-|doas|pkexec|chmod\\s+777|chmod\\s+\\+s|chown\\s+root|setuid|setgid|\\/etc\\/sudoers)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Privilege Escalation: 提权或修改系统安全设置（slowmist red-flag #6）"
+    },
+    {
+      "id": "SM-007",
+      "pattern": "(?:crontab|\\/etc\\/cron|systemctl\\s+enable|~\\/\\.config\\/autostart|~\\/\\.bashrc|~\\/\\.zshrc|~\\/\\.profile|\\/etc\\/rc\\.local|launchd|\\.plist)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Persistence Mechanisms: 建立持久化机制（slowmist red-flag #7）"
+    },
+    {
+      "id": "SM-008",
+      "pattern": "(?:npm\\s+install|pip\\s+install|cargo\\s+install|go\\s+install|gem\\s+install|apt\\s+install|brew\\s+install|curl\\s+\\|\\s+(?:sh|bash)|wget\\s+\\|\\s+(?:sh|bash))",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Runtime Package Installation: 运行时下载安装未声明的包（slowmist red-flag #8）"
+    },
+    {
+      "id": "SM-009",
+      "pattern": "(?:\\\\u[0-9a-fA-F]{4}){6,}|(?:\\\\x[0-9a-fA-F]{2}){6,}|(?:eval\\s*\\(\\s*unescape)|atob\\s*\\(|base64.*?decode.*?exec",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Code Obfuscation: 代码混淆（编码后执行、打包压缩脚本）（slowmist red-flag #9）"
+    },
+    {
+      "id": "SM-010",
+      "pattern": "(?:ps\\s+aux|ps\\s+-ef|pgrep|pidof|\\/proc\\/.*?\\/environ|ss\\s+-tlnp|netstat|lsof\\s+-i|nmap)",
+      "weight": 0.78,
+      "severity": "medium",
+      "description": "Process/System Reconnaissance: 检查运行进程/网络状态（slowmist red-flag #10）"
+    },
+    {
+      "id": "SM-011",
+      "pattern": "(?:document\\.cookie|localStorage|sessionStorage|IndexedDB|chrome\\.cookies|Login\\s+Data|Cookies\\s+\\(SQLite)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Browser Session/Cookie Access: 访问浏览器存储/会话数据（slowmist red-flag #11）"
+    },
+    {
+      "id": "SM-012",
+      "pattern": "(?:officially\\s+recommended|endorsed\\s+by|certified\\s+safe|official\\s+plugin|recommended\\s+by)\\s+(?:the|OpenClaw|security|team|admin|researcher|institute)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "Pseudo-Authority Claims: 内容声称拥有不存在的官方背书（slowmist social-eng #1）"
+    },
+    {
+      "id": "SM-013",
+      "pattern": "(?:safe|read-only|does not modify|standard.*?check|harmless|no changes|configuration optimization)\\s+(?:diagnostics|pre-flight|audit|check|validation)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "Safety False Assurance: 声称危险操作是安全的只读诊断（slowmist social-eng #2）"
+    },
+    {
+      "id": "SM-014",
+      "pattern": "(?:critical|urgent|emergency|immediate)\\s+(?:security|update|patch|fix|vulnerability)\\s+(?:install|update|apply|run|execute)\\s+(?:immediately|now|asap)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "Urgency and Pressure: 制造时间压力绕过仔细评估（slowmist social-eng #3）"
+    },
+    {
+      "id": "SM-015",
+      "pattern": "(?:pipe|\\|)\\s*(?:bash|sh|zsh|python|ruby|perl|node)|(?:curl|wget).*?\\|.*?(?:bash|sh|sudo\\s+bash)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Pipe-to-Shell Execution: 直接管道执行未审计的远程代码（slowmist supply-chain #2）"
+    },
+    {
+      "id": "SM-016",
+      "pattern": "(?:npx|pipx)\\s+(?:run|exec)\\s+(?!.*?(?:-\\-?dry|\\-\\-?help))\\S+",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "One-Shot Execution (npx/pipx): 直接运行包不留审计痕迹（slowmist supply-chain #3）"
+    },
+    {
+      "id": "SM-017",
+      "pattern": "(?:postinstall|preinstall|prepare)\\s*[:\"].*?(?:curl|wget|exec|eval|system|fetch|download|install)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Build-Time Injection: npm postinstall脚本执行恶意代码（slowmist supply-chain #6）"
+    },
+    {
+      "id": "SM-018",
+      "pattern": "(?:auto.?update|version.*?check|MANIFEST|remote.*?version).*(?:download|replace|overwrite|update|fetch)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Auto-Update Channel: 自动更新通道（远程仓库被控则可部署恶意更新）（slowmist supply-chain #4）"
+    },
+    {
+      "id": "SM-019",
+      "pattern": "(?:-y|--yes|--force|--no-confirm|--assume-yes|--non-interactive)\\b",
+      "weight": 0.78,
+      "severity": "medium",
+      "description": "Confirmation Bypass: 使用-y/--force跳过确认提示（slowmist social-eng #8）"
+    },
+    {
+      "id": "SM-020",
+      "pattern": "(?:does not mention|do not display|do not show|do not reveal|do not mention)\\s+(?:these|this|the)\\s+(?:instructions?|to the user|from the user|actions?)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Concealment Directive: 指示Agent不向用户透露操作内容（ClawArmor + slowmist）"
+    }
+  ]
+}

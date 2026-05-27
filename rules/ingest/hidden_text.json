@@ -1,0 +1,78 @@
+{
+  "name": "Hidden Text Detection",
+  "category": "hidden_text",
+  "description": "检测CSS隐藏文本中的恶意指令注入",
+  "severity": "high",
+  "patterns": [
+    {
+      "id": "hidden_display_none",
+      "pattern": "(?:display\\s*:\\s*none|visibility\\s*:\\s*hidden|opacity\\s*:\\s*0)\\s*[;}]",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "CSS display:none / visibility:hidden / opacity:0"
+    },
+    {
+      "id": "hidden_font_size_zero",
+      "pattern": "font-size\\s*:\\s*0(?:px|pt|em|rem)?\\s*[;}]",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "字体大小设为 0（隐藏文本）"
+    },
+    {
+      "id": "hidden_position_offscreen",
+      "pattern": "position\\s*:\\s*absolute\\s*;[^}]*(?:left|top)\\s*:\\s*-(?:9999|999|10000)(?:px|em|rem)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "绝对定位移出屏幕外"
+    },
+    {
+      "id": "hidden_overflow_clip",
+      "pattern": "(?:overflow\\s*:\\s*hidden|clip\\s*:\\s*rect\\(0|clip-path\\s*:\\s*(?:inset|circle)\\(0)\\s*;[^}]*(?:height|width)\\s*:\\s*0",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "overflow:hidden + 高度/宽度为 0"
+    },
+    {
+      "id": "hidden_text_indent",
+      "pattern": "text-indent\\s*:\\s*-(?:9999|999|10000)(?:px|em|rem)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "text-indent 极端负值（文字推到屏幕外）"
+    },
+    {
+      "id": "hidden_aria_label",
+      "pattern": "aria-label\\s*=\\s*[\"'][^\"']*(?:ignore|override|system|prompt|instruction)[^\"']*[\"']",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "aria-label 中嵌入恶意指令"
+    },
+    {
+      "id": "hidden_title_alt_inject",
+      "pattern": "(?:title|alt)\\s*=\\s*[\"'][^\"']*(?:ignore previous|system prompt|you are now|forget your)[^\"']*[\"']",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "title/alt 属性中注入 prompt 指令"
+    },
+    {
+      "id": "hidden_comment_inject",
+      "pattern": "<!--[\\s\\S]*(?:ignore|override|system|prompt|instruction|forget)[\\s\\S]*-->",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "HTML 注释中嵌入恶意指令"
+    },
+    {
+      "id": "hidden_input_type_hidden",
+      "pattern": "<input[^>]*type\\s*=\\s*[\"']hidden[\"'][^>]*value\\s*=\\s*[\"'][^\"']*(?:ignore|system|prompt)[^\"']*[\"']",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "hidden input 的 value 中注入指令"
+    },
+    {
+      "id": "hidden_tabindex_negative",
+      "pattern": "tabindex\\s*=\\s*-\\d+",
+      "weight": 0.5,
+      "severity": "low",
+      "description": "负 tabindex（不可通过 Tab 聚焦但可被屏幕阅读器读取）"
+    }
+  ]
+}

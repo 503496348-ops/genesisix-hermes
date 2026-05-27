@@ -1,0 +1,221 @@
+{
+  "name": "SAFE-MCP Threat Classification (MITRE ATT&CK aligned)",
+  "category": "safe_mcp_threats",
+  "description": "基于safe-mcp框架的MCP安全威胁分类体系 — 14个战术类别，85+技术。来源: https://github.com/safe-agentic-framework/safe-mcp",
+  "source": "safe-mcp (OpenSSF SIG-SAFE-MCP)",
+  "version": "1.0.0",
+  "tactics": {
+    "ATK-TA0043": "Reconnaissance",
+    "ATK-TA0042": "Resource Development",
+    "ATK-TA0001": "Initial Access",
+    "ATK-TA0002": "Execution",
+    "ATK-TA0003": "Persistence",
+    "ATK-TA0004": "Privilege Escalation",
+    "ATK-TA0005": "Defense Evasion",
+    "ATK-TA0006": "Credential Access",
+    "ATK-TA0007": "Discovery",
+    "ATK-TA0008": "Lateral Movement",
+    "ATK-TA0009": "Collection",
+    "ATK-TA0011": "Command and Control",
+    "ATK-TA0010": "Exfiltration",
+    "ATK-TA0040": "Impact"
+  },
+  "patterns": [
+    {
+      "id": "SAFE-T1001",
+      "pattern": "(?:<!--.*?(?:SYSTEM|INSTRUCTION|NOTE|AI|ASSISTANT).*?-->)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Tool Poisoning Attack (TPA): HTML注释中隐藏恶意指令（safe-mcp SAFE-T1001）"
+    },
+    {
+      "id": "SAFE-T1004",
+      "pattern": "(?:server\\s*(?:name|id|url)\\s*(?::|=).*?(?:same|similar|identical|replica|mirror|clone|fake))|(?:impersonat|name.?collision|spoof.*server)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Server Impersonation / Name-Collision: 伪造MCP服务器身份（safe-mcp SAFE-T1004）"
+    },
+    {
+      "id": "SAFE-T1005",
+      "pattern": "(?:endpoint|server|mcp)\\s*(?::|=).*?(?:no.?auth|debug\\s*(?:=|:)?\\s*(?:true|on|1)|exposed|public|open)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Exposed Endpoint Exploit: MCP端点未认证或开启调试模式（safe-mcp SAFE-T1005）"
+    },
+    {
+      "id": "SAFE-T1007",
+      "pattern": "(?:oauth|authorize|auth_url|redirect_uri).*?(?:phish|steal|harvest|intercept|look.?alike|typosquat)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "OAuth Authorization Phishing: OAuth授权流程劫持（safe-mcp SAFE-T1007）"
+    },
+    {
+      "id": "SAFE-T1008",
+      "pattern": "(?:shadow|impersonat|interfere|hijack|override).*(?:tool|function|method|server)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Tool Shadowing Attack: 跨服务器工具干扰/劫持（safe-mcp SAFE-T1008）"
+    },
+    {
+      "id": "SAFE-T1101",
+      "pattern": "(?:command|cmd|exec|shell|run|spawn|system)\\s*(?::|=|\\().*?(?:unsanitized|unescaped|unfiltered|raw|user.?input|\\$\\{|\\{\\{)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Command Injection: MCP服务器未清理输入导致RCE（safe-mcp SAFE-T1101）"
+    },
+    {
+      "id": "SAFE-T1103",
+      "pattern": "(?:fake|forge|spoof|mimic|simulate)\\s+(?:tool|function|call|invoke|method)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Fake Tool Invocation (Function Spoofing): 伪造MCP工具调用消息（safe-mcp SAFE-T1103）"
+    },
+    {
+      "id": "SAFE-T1105",
+      "pattern": "(?:\\.\\.\\/|\\.\\.\\\\\\\\|path.*?traversal|directory.*?traversal|\\.\\.).*?(?:secret|key|config|passwd|shadow|\\.env|credential)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Path Traversal via File Tool: 文件路径遍历攻击（safe-mcp SAFE-T1105）"
+    },
+    {
+      "id": "SAFE-T1106",
+      "pattern": "(?:infinite|loop|recursive|self.?invoke|auto.?call|repeat.*?forever|while.*?true.*?tool)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Autonomous Loop Exploit: Agent无限自调用循环DoS（safe-mcp SAFE-T1106）"
+    },
+    {
+      "id": "SAFE-T1110",
+      "pattern": "(?:embed|inject|hide|steganograph).*(?:image|audio|multimodal|pixel|wav|mp3).*(?:instruction|command|prompt)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Multimodal Prompt Injection: 图片/音频中嵌入恶意指令（safe-mcp SAFE-T1110）"
+    },
+    {
+      "id": "SAFE-T1112",
+      "pattern": "(?:sampling|createMessage).*(?:abuse|drain|quota|bias|pivot)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Sampling Request Abuse: 恶意MCP服务器滥用sampling请求（safe-mcp SAFE-T1112）"
+    },
+    {
+      "id": "SAFE-T1201",
+      "pattern": "(?:rug.?pull|time.?delay|delayed.*?malicious|later.*?update|gradually.*?change)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "MCP Rug Pull Attack: 初始合法后延迟修改为恶意工具定义（safe-mcp SAFE-T1201）"
+    },
+    {
+      "id": "SAFE-T1204",
+      "pattern": "(?:vector.?store|long.?term.?memory|embeddings?).*(?:implant|poison|contaminat|inject|persist)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Context Memory Implant: 向量存储中植入恶意持久内容（safe-mcp SAFE-T1204）"
+    },
+    {
+      "id": "SAFE-T1301",
+      "pattern": "(?:cross.?server|server.?shadow|override.*?tool).*(?:privilege|escalat|elevat)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Cross-Server Tool Shadowing: 恶意服务器覆盖合法工具以获取权限（safe-mcp SAFE-T1301）"
+    },
+    {
+      "id": "SAFE-T1307",
+      "pattern": "(?:confused.?deputy|token.*?forward|alice.*?bob|relay.*?token|delegate.*?auth)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Confused Deputy Attack: MCP服务器代持Token转发给非授权方（safe-mcp SAFE-T1307）"
+    },
+    {
+      "id": "SAFE-T1401",
+      "pattern": "(?:line.?jump|context.*?inject.*?before|pre.?tool.*?inject|bypass.*?checkpoint)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Line Jumping: 通过上下文注入绕过安全检查点（safe-mcp SAFE-T1401）"
+    },
+    {
+      "id": "SAFE-T1402",
+      "pattern": "(?:zero.?width|\\u200[B-F]|\\uFEFF|html.?comment|steganograph).*(?:hide|inject|embed|conceal)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Instruction Steganography: 隐藏字符/HTML注释中的隐写指令（safe-mcp SAFE-T1402）"
+    },
+    {
+      "id": "SAFE-T1403",
+      "pattern": "(?:consent.?fatigue|repeated.*?benign|desensitiz|mid.?flow.*?request|slow.?boil)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "Consent-Fatigue Exploit: 多次无害请求使用户疲劳后隐藏恶意请求（safe-mcp SAFE-T1403）"
+    },
+    {
+      "id": "SAFE-T1404",
+      "pattern": "(?:response.*?tamper|do.?not.?mention|hide.*?action|mask.*?output|silent.*?execute)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Response Tampering: 指示模型不提及危险操作（safe-mcp SAFE-T1404）"
+    },
+    {
+      "id": "SAFE-T1501",
+      "pattern": "(?:full.?schema.*?poison|schema.*?credential|parameter.*?theft|inputSchema.*?poison)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Full-Schema Poisoning (FSP): 整个MCP Schema投毒窃取凭据（safe-mcp SAFE-T1501）"
+    },
+    {
+      "id": "SAFE-T1701",
+      "pattern": "(?:cross.?tool.*?contaminat|tool.*?lateral|pivot.*?tool|chain.*?tool.*?compromis)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Cross-Tool Contamination: 利用被控工具横向访问其他服务（safe-mcp SAFE-T1701）"
+    },
+    {
+      "id": "SAFE-T1702",
+      "pattern": "(?:shared.?memory.*?poison|write.*?false.*?task|peer.*?agent.*?inject|vector.?db.*?poison)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Shared-Memory Poisoning: 向共享向量DB写入虚假任务（safe-mcp SAFE-T1702）"
+    },
+    {
+      "id": "SAFE-T1705",
+      "pattern": "(?:cross.?agent.*?inject|multi.?agent.*?inject|message.?bus.*?inject|inter.?agent.*?direct)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Cross-Agent Instruction Injection: 多Agent消息总线注入（safe-mcp SAFE-T1705）"
+    },
+    {
+      "id": "SAFE-T1901",
+      "pattern": "(?:outbound.*?webhook.*?c2|http\\.post.*?attacker|command.?and.?control.*?channel)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Outbound Webhook C2: LLM调用http.post到攻击者URL（safe-mcp SAFE-T1901）"
+    },
+    {
+      "id": "SAFE-T1910",
+      "pattern": "(?:covert.*?channel.*?exfil|tool.*?parameter.*?exfil|error.*?message.*?exfil|smuggl.*?data)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Covert Channel Exfiltration: 通过工具参数/错误消息/合法操作外泄数据（safe-mcp SAFE-T1910）"
+    },
+    {
+      "id": "SAFE-T2101",
+      "pattern": "(?:delete_file|drop_table|rm\\s+-rf|destroy.*?data|wipe.*?assets)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Data Destruction: 通过delete_file或drop_table命令销毁资产（safe-mcp SAFE-T2101）"
+    },
+    {
+      "id": "SAFE-T2103",
+      "pattern": "(?:commit.*?malicious.*?pr|push.*?sabotage|inject.*?repo|backdoor.*?codebase)",
+      "weight": 0.88,
+      "severity": "critical",
+      "description": "Code Sabotage: Agent向代码仓库提交恶意PR（safe-mcp SAFE-T2103）"
+    },
+    {
+      "id": "SAFE-T3001",
+      "pattern": "(?:rag.*?backdoor|retrieval.*?trigger|pipeline.*?poison|knowledge.*?base.*?implant)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "RAG Backdoor Attack: RAG管道中植入隐式触发器（safe-mcp SAFE-T3001）"
+    }
+  ]
+}

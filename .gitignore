@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Data (runtime generated)
+data/case_database.jsonl
+data/rule_suggestions.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test output
+test_output/
+*.log

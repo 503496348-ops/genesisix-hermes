@@ -1,0 +1,78 @@
+{
+  "name": "Memory System Injection Detection",
+  "category": "memory_injection",
+  "version": "1.0.0",
+  "description": "检测写入记忆系统（long-term memory、working checkpoint）中的恶意指令注入",
+  "patterns": [
+    {
+      "id": "MEM-001",
+      "pattern": "(?:always|从现在开始|从此以后|forever)\\s+(?:ignore|forget|override|disregard|忽略|忘记|覆盖)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "持久化覆写指令 — 试图写入永久忽略规则的指令"
+    },
+    {
+      "id": "MEM-002",
+      "pattern": "(?:remember|记住|记住这个|store this)[^\\n]*(?:ignore|forget|override|system prompt|system instruction|系统提示)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "记忆存储注入 — 试图将恶意指令存入记忆"
+    },
+    {
+      "id": "MEM-003",
+      "pattern": "(?:SYSTEM RULE|SYSTEM NOTE|ADMIN INSTRUCTION|PERSISTENT RULE|系统规则|管理员指令|永久规则)[:\\s]+",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "伪系统规则注入 — 在记忆中写入伪系统级规则"
+    },
+    {
+      "id": "MEM-004",
+      "pattern": "(?:new instruction|new rule|updated instruction|revised rule|新的指令|新的规则|更新的规则)[:\\s]+(?:ignore|forget|override|reveal|泄露|显示|执行)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "指令替换注入 — 试图用新指令替换原有指令"
+    },
+    {
+      "id": "MEM-005",
+      "pattern": "(?:you are now|you will now|from this point|从此刻起|你现在是|你将).*(?:ignore|forget|have no|without|没有限制|无限制)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "角色覆写注入 — 通过记忆改变AI角色定位"
+    },
+    {
+      "id": "MEM-006",
+      "pattern": "(?:<\\|im_start\\|>|<\\|endoftext\\|>|\\[INST\\]|<<SYS>>)[\\s\\S]*(?:system|ignore|override)",
+      "severity": "critical",
+      "weight": 0.96,
+      "description": "特殊Token注入 — 在记忆中嵌入LLM特殊token"
+    },
+    {
+      "id": "MEM-007",
+      "pattern": "(?:key_info|checkpoint|memory|note)\\s*[:=]\\s*['\"]?(?:ignore|forget|override|execute|eval|system)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "字段值注入 — 在结构化记忆字段中注入恶意值"
+    },
+    {
+      "id": "MEM-008",
+      "pattern": "(?:IMPORTANT|CRITICAL|URGENT|重要|关键|紧急)[^\\n]*(?:ignore|override|forget|disregard|忽略|覆盖|忘记|无视)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "紧急标记注入 — 用紧急/重要标记来提升注入指令优先级"
+    },
+    {
+      "id": "MEM-009",
+      "pattern": "(?:Do not|不要|别).*(?:mention|tell|reveal|disclose|show).*(?:this|this memory|这个记忆|这条)",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "隐蔽性注入 — 要求隐藏注入行为本身"
+    },
+    {
+      "id": "MEM-010",
+      "pattern": "(?:user preference|用户偏好|user setting|用户设置)[:\\s]+(?:ignore|override|disable|bypass|禁用|绕过|关闭)",
+      "severity": "critical",
+      "weight": 0.91,
+      "description": "用户偏好注入 — 通过伪造用户偏好来改变行为"
+    }
+  ]
+}

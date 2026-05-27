@@ -1,0 +1,113 @@
+{
+  "name": "Short Link Detection",
+  "category": "short_link",
+  "description": "检测短链接服务，需展开验证最终目标",
+  "severity": "medium",
+  "patterns": [
+    {
+      "id": "shortlink_bitly",
+      "pattern": "https?://(?:bit\\.ly|bitly\\.com|j\\.mp)/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Bit.ly 短链接"
+    },
+    {
+      "id": "shortlink_tinyurl",
+      "pattern": "https?://tinyurl\\.com/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "TinyURL 短链接"
+    },
+    {
+      "id": "shortlink_tco",
+      "pattern": "https?://t\\.co/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Twitter t.co 短链接"
+    },
+    {
+      "id": "shortlink_goo",
+      "pattern": "https?://goo\\.gl/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Google 短链接"
+    },
+    {
+      "id": "shortlink_owly",
+      "pattern": "https?://ow\\.ly/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Hootsuite 短链接"
+    },
+    {
+      "id": "shortlink_buff",
+      "pattern": "https?://buff\\.ly/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Buffer 短链接"
+    },
+    {
+      "id": "shortlink_isgd",
+      "pattern": "https?://is\\.gd/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "is.gd 短链接"
+    },
+    {
+      "id": "shortlink_tinycc",
+      "pattern": "https?://tiny\\.cc/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "tiny.cc 短链接"
+    },
+    {
+      "id": "shortlink_cuttly",
+      "pattern": "https?://cutt\\.ly/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Cutt.ly 短链接"
+    },
+    {
+      "id": "shortlink_shortcm",
+      "pattern": "https?://short\\.cm/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Short.cm 短链接"
+    },
+    {
+      "id": "shortlink_rebrandly",
+      "pattern": "https?://(?:rb\\.gy|rebrand\\.ly)/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Rebrandly 短链接"
+    },
+    {
+      "id": "shortlink_dwz",
+      "pattern": "https?://dwz\\.cn/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "百度短链接"
+    },
+    {
+      "id": "shortlink_suoim",
+      "pattern": "https?://suo\\.im/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "新浪短链接"
+    },
+    {
+      "id": "shortlink_tcn",
+      "pattern": "https?://t\\.cn/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "微博 t.cn 短链接"
+    },
+    {
+      "id": "shortlink_urlcn",
+      "pattern": "https?://url\\.cn/",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "腾讯 url.cn 短链接"
+    }
+  ]
+}

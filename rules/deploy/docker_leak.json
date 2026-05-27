@@ -1,0 +1,35 @@
+{
+  "name": "Docker Information Leak Detection",
+  "category": "docker_leak",
+  "description": "检测Docker配置和镜像信息泄露",
+  "patterns": [
+    {
+      "id": "docker_env_secret",
+      "pattern": "(?:ENV|ARG)\\s+(?:SECRET|PASSWORD|TOKEN|KEY|API|AWS|DB|DATABASE|CREDENTIAL|PRIVATE|AUTH)\\w*\\s*=",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Dockerfile中的敏感环境变量"
+    },
+    {
+      "id": "docker_copy_env",
+      "pattern": "COPY\\s+(?:.*\\s)?(?:\\.env|\\.env\\..*|secrets?\\.json|credentials?\\.json|config\\.json)\\s",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Dockerfile复制敏感文件"
+    },
+    {
+      "id": "docker_expose_port",
+      "pattern": "EXPOSE\\s+(?:22|3306|5432|6379|27017|9200|11211)",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "Docker暴露敏感端口"
+    },
+    {
+      "id": "docker_run_secret",
+      "pattern": "RUN\\s+.*(?:curl|wget|cat|echo).*(?:SECRET|PASSWORD|TOKEN|KEY|API)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Docker RUN命令中的敏感信息"
+    }
+  ]
+}

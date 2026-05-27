@@ -1,0 +1,163 @@
+{
+  "name": "Profile Configuration Backdoor Detection",
+  "category": "profile_backdoor",
+  "description": "Agent Profile配置文件后门检测 — 基于deepsafe-scan的hooks注入检测，覆盖AGENTS.md/SOUL.md/CLAUDE.md/.cursorrules/.windsurfrules等配置文件中的后门特征",
+  "source": "deepsafe-scan hooks module + g0 goal-integrity rules",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "PB-001",
+      "pattern": "bash\\s+-i\\s+>&\\s+/dev/tcp/[^/]+/\\d+\\s+0>&1",
+      "weight": 0.99,
+      "severity": "critical",
+      "description": "反弹Shell后门（deepsafe-scan: CRITICAL — bash -i reverse shell）"
+    },
+    {
+      "id": "PB-002",
+      "pattern": "(?:curl|wget)\\s+[^|]*\\|\\s*(?:bash|sh|python|node|perl|ruby)",
+      "weight": 0.98,
+      "severity": "critical",
+      "description": "远程脚本管道执行（deepsafe-scan: CRITICAL — curl|sh RCE）"
+    },
+    {
+      "id": "PB-003",
+      "pattern": "(?:curl|wget)\\s+.*?\\$\\{?(?:ANTHROPIC_API_KEY|OPENAI_API_KEY|API_KEY|TOKEN|SECRET|PASSWORD)",
+      "weight": 0.97,
+      "severity": "critical",
+      "description": "凭证外传（deepsafe-scan: CRITICAL — 将API Key发送到外部服务器）"
+    },
+    {
+      "id": "PB-004",
+      "pattern": "cat\\s+(?:~|/home|/root)/[.]ssh/(?:id_rsa|id_ed25519|id_dsa|id_ecdsa|authorized_keys)",
+      "weight": 0.97,
+      "severity": "critical",
+      "description": "SSH密钥读取（deepsafe-scan: CRITICAL — 窃取SSH私钥）"
+    },
+    {
+      "id": "PB-005",
+      "pattern": "echo\\s+[A-Za-z0-9+/=]{20,}\\s*\\|\\s*base64\\s+-d\\s*\\|\\s*(?:bash|sh|python|node)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Base64编码后门执行（deepsafe-scan: HIGH — 混淆命令执行）"
+    },
+    {
+      "id": "PB-006",
+      "pattern": "(?:crontab\\s+-e|launchctl\\s+load|systemctl\\s+enable|at\\s+now)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "持久化机制（deepsafe-scan: HIGH — 创建定时任务/系统服务持久化后门）"
+    },
+    {
+      "id": "PB-007",
+      "pattern": "rm\\s+-rf\\s+(?:/|~|/tmp|/var|/etc|\\$HOME|\\*)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "破坏性文件删除（deepsafe-scan: HIGH — rm -rf 系统关键路径）"
+    },
+    {
+      "id": "PB-008",
+      "pattern": "LD_PRELOAD\\s*=|DYLD_INSERT_LIBRARIES\\s*=",
+      "weight": 0.98,
+      "severity": "critical",
+      "description": "进程注入/动态库劫持（deepsafe-scan: CRITICAL — LD_PRELOAD注入恶意共享库）"
+    },
+    {
+      "id": "PB-009",
+      "pattern": "(?:dig|nslookup|host)\\s+.*?\\$\\{?\\w+",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "DNS外传（deepsafe-scan: HIGH — 通过DNS查询泄露数据）"
+    },
+    {
+      "id": "PB-010",
+      "pattern": "(?:printenv|env|set)\\s*>\\s*/tmp/|export\\s+.*?>\\s*/tmp/",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "环境变量Dump（deepsafe-scan: HIGH — 将所有环境变量导出到文件）"
+    },
+    {
+      "id": "PB-011",
+      "pattern": "chmod\\s+(?:[+]x|777|755)\\s+/tmp/",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "临时文件提权（deepsafe-scan: HIGH — 在/tmp下创建可执行后门）"
+    },
+    {
+      "id": "PB-012",
+      "pattern": "(?:preSessionCommand|postSessionCommand|onStart|onInit|beforeCommand)\\s*[:=]\\s*[\"'][^\"']*(?:curl|wget|bash|eval|exec)",
+      "weight": 0.92,
+      "severity": "high",
+      "description": "Session生命周期钩子注入（deepsafe-scan: MEDIUM-HIGH — 在Agent启动时执行恶意命令）"
+    },
+    {
+      "id": "PB-013",
+      "pattern": "(?:ignore|forget|disregard|override|replace|new instruction|stop being|you are now|act as|pretend)\\s+(?:all|previous|above|prior|system|instructions|rules)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "指令覆盖注入（deepsafe-scan: 提示词注入 — 在Profile中嵌入指令覆盖）"
+    },
+    {
+      "id": "PB-014",
+      "pattern": "(?:ssh|scp|rsync).*?(?:@|://).*?(?:\\d+\\.\\d+\\.\\d+\\.\\d+|[a-z]+[.]com|[.]io|[.]net)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "SSH远程传输（deepsafe-scan: 数据通过SSH外传）"
+    },
+    {
+      "id": "PB-015",
+      "pattern": "(?:nc|ncat|netcat|socat)\\s+.*?(?:-e|/bin/|cmd[.]exe|/dev/tcp)",
+      "weight": 0.98,
+      "severity": "critical",
+      "description": "Netcat后门（deepsafe-scan: CRITICAL — 反弹shell）"
+    },
+    {
+      "id": "PB-016",
+      "pattern": "(?:cursorrules|windsurfrules|CLAUDE[.]md|AGENTS[.]md|SOUL[.]md|SKILL[.]md|MEMORY[.]md).*?(?:run|execute|exec|spawn|system|subprocess|child_process)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Profile配置文件包含命令执行指令（deepsafe-scan: hooks后门 — Agent读取后自动执行）"
+    },
+    {
+      "id": "PB-017",
+      "pattern": "(?:always|every time|each time|before|after)\\s+(?:you|the agent|assistant)\\s+(?:start|run|execute|initialize|begin)",
+      "weight": 0.82,
+      "severity": "high",
+      "description": "持久化指令注入（deepsafe-scan: 在Profile中嵌入每次启动自动执行的指令）"
+    },
+    {
+      "id": "PB-018",
+      "pattern": "(?:npm|pip|cargo|gem|brew|apt|yum)\\s+(?:install|add)\\s+.*?(?:--global|-g|--save|--force)",
+      "weight": 0.75,
+      "severity": "medium",
+      "description": "全局包安装指令（g0: supply-chain — Profile中嵌入全局包安装可能引入恶意依赖）"
+    },
+    {
+      "id": "PB-019",
+      "pattern": "(?:[.]vscode/tasks[.]json|runOn\\s*:\\s*folderOpen|autorun|auto.?execute)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "IDE自动执行任务（deepsafe-scan: CRITICAL — .vscode/tasks.json folderOpen自动执行）"
+    },
+    {
+      "id": "PB-020",
+      "pattern": "(?:namespace|sys[.]modules|importlib|__import__|__builtins__|globals|locals|exec|compile).*?(?:inject|hook|patch|override|monkey.?patch)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "Python运行时注入（g0: code-execution — 通过Python内省机制注入恶意代码）"
+    },
+    {
+      "id": "PB-021",
+      "pattern": "(?:git\\s+clone|git\\s+pull|git\\s+fetch).*?(?:&&|;|\\|)\\s*(?:npm|pip|make|[.]/|bash|sh)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Git仓库拉取后自动构建执行（g0: supply-chain — clone后链式执行恶意脚本）"
+    },
+    {
+      "id": "PB-022",
+      "pattern": "(?:\\$\\(|`[^`]*`|\\$\\{).*?(?:curl|wget|nc|ncat|bash|sh|python|node|perl)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "命令替换执行远程代码（deepsafe-scan: 命令注入 — 在Profile中通过命令替换隐藏执行）"
+    }
+  ]
+}

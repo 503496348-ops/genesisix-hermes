@@ -1,0 +1,106 @@
+{
+  "name": "Data Exfiltration Detection",
+  "category": "data_exfiltration",
+  "description": "检测请求 body 中的敏感数据外泄（密钥、PII、凭证）",
+  "severity": "critical",
+  "patterns": [
+    {
+      "id": "exfil_api_key",
+      "pattern": "(?:api[_-]?key|apikey|api[_-]?secret)\\s*[:=]\\s*['\"][A-Za-z0-9+/=_-]{16,}['\"]",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "API Key 在请求 body 中"
+    },
+    {
+      "id": "exfil_aws_key",
+      "pattern": "(?:AKIA|ASIA)[A-Z0-9]{16}",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "AWS Access Key ID"
+    },
+    {
+      "id": "exfil_aws_secret",
+      "pattern": "(?:aws[_-]?secret[_-]?access[_-]?key)\\s*[:=]\\s*['\"][A-Za-z0-9+/=]{40}['\"]",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "AWS Secret Access Key"
+    },
+    {
+      "id": "exfil_private_key",
+      "pattern": "-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----",
+      "weight": 0.99,
+      "severity": "critical",
+      "description": "私钥文件内容"
+    },
+    {
+      "id": "exfil_jwt_token",
+      "pattern": "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "JWT Token"
+    },
+    {
+      "id": "exfil_credit_card",
+      "pattern": "\\b(?:4\\d{3}|5[1-5]\\d{2}|3[47]\\d{2}|6(?:011|5\\d{2}))[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "信用卡号（Visa/MC/Amex/Discover）"
+    },
+    {
+      "id": "exfil_ssn",
+      "pattern": "\\b\\d{3}[- ]?\\d{2}[- ]?\\d{4}\\b",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "美国社会安全号码格式"
+    },
+    {
+      "id": "exfil_email_password",
+      "pattern": "(?:password|passwd|pwd|secret|token)\\s*[:=]\\s*['\"][^'\"]{6,}['\"]",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "密码/Token 字段赋值"
+    },
+    {
+      "id": "exfil_phone_cn",
+      "pattern": "\\b1[3-9]\\d{9}\\b",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "中国手机号码"
+    },
+    {
+      "id": "exfil_id_card_cn",
+      "pattern": "\\b\\d{6}(?:19|20)\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])\\d{3}[\\dXx]\\b",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "中国身份证号码"
+    },
+    {
+      "id": "exfil_slack_token",
+      "pattern": "xox[bpors]-[0-9A-Za-z-]+",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Slack Token"
+    },
+    {
+      "id": "exfil_github_token",
+      "pattern": "gh[ps]_[A-Za-z0-9_]{36,}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "GitHub Personal Access Token"
+    },
+    {
+      "id": "exfil_stripe_key",
+      "pattern": "(?:sk_live|pk_live|sk_test|pk_test)_[A-Za-z0-9]{20,}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Stripe API Key"
+    },
+    {
+      "id": "exfil_openai_key",
+      "pattern": "sk-[A-Za-z0-9]{20,}T3BlbkFJ[A-Za-z0-9]{20,}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "OpenAI API Key"
+    }
+  ]
+}

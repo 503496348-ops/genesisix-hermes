@@ -1,0 +1,149 @@
+{
+  "category": "schema_signature",
+  "name": "MCP Schema Signature Verification (SchemaPin-Inspired)",
+  "description": "Cryptographic schema verification rules inspired by SchemaPin — ECDSA P-256 signatures, .well-known discovery, TOFU key pinning, revocation checking, and trust bundles",
+  "version": "2.5.0",
+  "source": "SchemaPin-technical-spec-v1.4",
+  "protocol": {
+    "algorithm": "ECDSA-P256-SHA256",
+    "key_format": "PEM",
+    "signature_encoding": "Base64-detached",
+    "discovery": ".well-known/schemapin.json",
+    "pinning": "TOFU (Trust-On-First-Use)"
+  },
+  "patterns": [
+    {
+      "id": "SS-001",
+      "pattern": "\"schema_version\"\\s*:\\s*\"(?!1\\.[0-4])",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Unsupported SchemaPin version — potential compatibility attack"
+    },
+    {
+      "id": "SS-002",
+      "pattern": "\"public_key_pem\"\\s*:\\s*\"(?!-----BEGIN PUBLIC KEY-----)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Invalid public key format — not a valid PEM key"
+    },
+    {
+      "id": "SS-003",
+      "pattern": "\"revoked_keys\"\\s*:\\s*\\[\\s*\"sha256:",
+      "severity": "critical",
+      "weight": 0.98,
+      "description": "Revoked key detected in schema signature document"
+    },
+    {
+      "id": "SS-004",
+      "pattern": "\"expires_at\"\\s*:\\s*\"[0-9]{4}-[0-9]{2}-[0-9]{2}",
+      "severity": "medium",
+      "weight": 0.60,
+      "description": "Signature expiration field present — check if expired"
+    },
+    {
+      "id": "SS-005",
+      "pattern": "\"schema_version\"\\s*:\\s*\"[^\"]*\"[^}]*\"previous_hash\"\\s*:\\s*\"",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "Schema version binding present — lineage chain enforcement active"
+    },
+    {
+      "id": "SS-006",
+      "pattern": "\"reason\"\\s*:\\s*\"key_compromise\"",
+      "severity": "critical",
+      "weight": 0.99,
+      "description": "Key compromise revocation — private key was compromised"
+    },
+    {
+      "id": "SS-007",
+      "pattern": "\"reason\"\\s*:\\s*\"privilege_withdrawn\"",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Privilege withdrawn — key holder authorization revoked"
+    },
+    {
+      "id": "SS-008",
+      "pattern": "\"revocation_endpoint\"\\s*:\\s*\"https?://",
+      "severity": "info",
+      "weight": 0.30,
+      "description": "Revocation endpoint present — should be checked for standalone revocations"
+    },
+    {
+      "id": "SS-009",
+      "pattern": "\"fingerprint\"\\s*:\\s*\"sha256:[a-f0-9]{64}\"",
+      "severity": "info",
+      "weight": 0.40,
+      "description": "Key fingerprint format — valid SHA-256 fingerprint detected"
+    },
+    {
+      "id": "SS-010",
+      "pattern": "\"schemapin_bundle_version\"\\s*:\\s*\"",
+      "severity": "info",
+      "weight": 0.30,
+      "description": "Trust bundle detected — offline/air-gapped verification mode"
+    },
+    {
+      "id": "SS-011",
+      "pattern": "\"developer_name\"\\s*:\\s*\"\"",
+      "severity": "medium",
+      "weight": 0.65,
+      "description": "Empty developer name — suspicious schema signing metadata"
+    },
+    {
+      "id": "SS-012",
+      "pattern": "\"domain\"\\s*:\\s*\"[^\"]*\\.onion\"",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "Tor onion domain in schema — high-risk anonymous signing"
+    },
+    {
+      "id": "SS-013",
+      "pattern": "\"_schemapin\\.[^\"]+\".*?\"TXT\"",
+      "severity": "info",
+      "weight": 0.35,
+      "description": "DNS TXT cross-verification record — second-channel trust"
+    }
+  ],
+  "verification_rules": {
+    "require_signature": {
+      "description": "All MCP tool schemas MUST have a valid cryptographic signature",
+      "severity": "critical",
+      "action": "reject_unsigned"
+    },
+    "check_revocation": {
+      "description": "Verify key is not in revoked_keys array or standalone revocation document",
+      "severity": "critical",
+      "action": "reject_revoked"
+    },
+    "verify_fingerprint": {
+      "description": "Calculate SHA-256 fingerprint of DER-encoded public key and match against pinned",
+      "severity": "critical",
+      "action": "reject_mismatch"
+    },
+    "canonicalize_schema": {
+      "description": "JSON schema must be canonicalized (sorted keys, no whitespace) before verification",
+      "severity": "high",
+      "action": "reject_invalid"
+    },
+    "check_expiration": {
+      "description": "If expires_at is present, check against current time",
+      "severity": "medium",
+      "action": "warn_expired"
+    },
+    "verify_lineage": {
+      "description": "If schema_version + previous_hash present, verify chain of custody",
+      "severity": "medium",
+      "action": "warn_broken_chain"
+    },
+    "pin_key": {
+      "description": "On first use, pin the public key. Reject if key changes without user consent",
+      "severity": "high",
+      "action": "alert_key_change"
+    },
+    "https_only": {
+      "description": "All .well-known endpoints MUST use HTTPS",
+      "severity": "critical",
+      "action": "reject_http"
+    }
+  }
+}

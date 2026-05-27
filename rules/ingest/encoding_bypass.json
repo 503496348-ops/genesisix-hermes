@@ -1,0 +1,92 @@
+{
+  "name": "Encoding Bypass Detection",
+  "category": "encoding_bypass",
+  "description": "检测使用编码混淆绕过安全过滤的攻击",
+  "severity": "high",
+  "patterns": [
+    {
+      "id": "enc_base64_command",
+      "pattern": "(?:eval|exec|Function|setTimeout|setInterval|require|import|__import__|compile)\\s*(?:\\(|[\\s,])\\s*(?:atob|btoa|Buffer\\.from|base64\\.decode|b64decode)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "执行 base64 解码后的代码"
+    },
+    {
+      "id": "enc_base64_long",
+      "pattern": "[A-Za-z0-9+/]{40,}={0,2}",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "长 base64 字符串（可能隐藏恶意内容）"
+    },
+    {
+      "id": "enc_hex_escape",
+      "pattern": "(?:\\\\x[0-9a-fA-F]{2}){8,}",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "连续 hex 转义序列（8个以上）"
+    },
+    {
+      "id": "enc_unicode_escape",
+      "pattern": "(?:\\\\u[0-9a-fA-F]{4}){8,}",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "连续 Unicode 转义序列（8个以上）"
+    },
+    {
+      "id": "enc_html_entity",
+      "pattern": "(?:&#x?[0-9a-fA-F]+;){8,}",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "连续 HTML 实体编码（8个以上）"
+    },
+    {
+      "id": "enc_double_encode",
+      "pattern": "%25[0-9a-fA-F]{2}",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "双重 URL 编码（%25XX）"
+    },
+    {
+      "id": "enc_mixed_encode",
+      "pattern": "%[0-9a-fA-F]{2}.*\\\\u[0-9a-fA-F]{4}.*&#x?[0-9a-fA-F]+;",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "混合编码（URL+Unicode+HTML实体）"
+    },
+    {
+      "id": "enc_charcode_build",
+      "pattern": "String\\.fromCharCode\\s*\\(\\s*(?:\\d{1,3}\\s*,\\s*){5,}",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "String.fromCharCode 拼接（5个以上字符码）"
+    },
+    {
+      "id": "enc_atob_eval",
+      "pattern": "(?:eval|Function|setTimeout)\\s*\\(\\s*(?:atob|window\\.(?:atob|decodeURIComponent))",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "eval(atob(...)) 模式"
+    },
+    {
+      "id": "enc_replace_decode",
+      "pattern": "\\.replace\\s*\\([^)]+,[^)]+\\)\\s*\\.replace\\s*\\([^)]+,[^)]+\\)\\s*\\.replace",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "链式 replace 解混淆（3层以上）"
+    },
+    {
+      "id": "enc_jwt_b64url",
+      "pattern": "[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{20,}",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "JWT 格式 base64url 编码"
+    },
+    {
+      "id": "enc_py_pycarshal",
+      "pattern": "(?:marshal\\.loads|pickle\\.loads|yaml\\.unsafe_load)\\s*\\(",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Python 反序列化（marshal/pickle/unsafe yaml）"
+    }
+  ]
+}

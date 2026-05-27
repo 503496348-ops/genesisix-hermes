@@ -1,0 +1,327 @@
+{
+  "category": "prompt_firewall",
+  "name": "Prompt Injection Firewall (FireClaw-Inspired)",
+  "description": "4-stage pipeline detection patterns inspired by FireClaw — structural sanitization, injection signatures, output manipulation, and exfiltration markers",
+  "version": "2.5.0",
+  "source": "fireclaw-patterns-v2 + 奇点造物-Genesisix-extensions",
+  "stages": {
+    "stage1_structural": "HTML/Unicode structural tricks",
+    "stage2_injection": "Injection signature detection",
+    "stage3_output": "Output manipulation detection",
+    "stage4_exfiltration": "Data exfiltration detection"
+  },
+  "patterns": [
+    {
+      "id": "PF-S1-001",
+      "stage": "structural",
+      "pattern": "<script[^>]*>[\\s\\S]*?<\\/script>",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Script tag injection — potential XSS/prompt injection via embedded scripts"
+    },
+    {
+      "id": "PF-S1-002",
+      "stage": "structural",
+      "pattern": "<iframe[^>]*>[\\s\\S]*?<\\/iframe>",
+      "severity": "high",
+      "weight": 0.90,
+      "description": "Iframe injection — hidden content loading"
+    },
+    {
+      "id": "PF-S1-003",
+      "stage": "structural",
+      "pattern": "display:\\s*none|visibility:\\s*hidden|opacity:\\s*0|font-size:\\s*0",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "CSS hiding techniques — conceal injected instructions"
+    },
+    {
+      "id": "PF-S1-004",
+      "stage": "structural",
+      "pattern": "[\\u202E\\u202D\\u202A\\u202B]",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "RTL/LTR override characters — text direction manipulation"
+    },
+    {
+      "id": "PF-S1-005",
+      "stage": "structural",
+      "pattern": "[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F-\\u009F]",
+      "severity": "medium",
+      "weight": 0.70,
+      "description": "Control characters — hidden instruction injection"
+    },
+    {
+      "id": "PF-S1-006",
+      "stage": "structural",
+      "pattern": "[\\u0430-\\u044F\\u0410-\\u042F].*?[a-zA-Z]|[a-zA-Z].*?[\\u0430-\\u044F\\u0410-\\u042F]",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "Cyrillic-Latin homoglyph mixing — visual impersonation attack"
+    },
+    {
+      "id": "PF-S1-007",
+      "stage": "structural",
+      "pattern": "[\\u0300-\\u036F]{3,}",
+      "severity": "medium",
+      "weight": 0.65,
+      "description": "Excessive combining diacritical marks — text obfuscation"
+    },
+    {
+      "id": "PF-S1-008",
+      "stage": "structural",
+      "pattern": "data:[^,]+;base64,[A-Za-z0-9+/]{50,}",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Base64 data URI — embedded payload delivery"
+    },
+    {
+      "id": "PF-S1-009",
+      "stage": "structural",
+      "pattern": "%25[0-9a-fA-F]{2}",
+      "severity": "medium",
+      "weight": 0.72,
+      "description": "Double URL encoding — encoding bypass attempt"
+    },
+    {
+      "id": "PF-S2-001",
+      "stage": "injection",
+      "pattern": "ignore\\s+(previous|all|prior|earlier|above)\\s+(instructions|prompts|commands|directives|context|rules)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Classic ignore-previous-instructions injection"
+    },
+    {
+      "id": "PF-S2-002",
+      "stage": "injection",
+      "pattern": "(new|updated|revised|changed|override)\\s+(instructions|commands|directives|system|prompt|rules)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "Instruction override injection — attempts to replace system prompt"
+    },
+    {
+      "id": "PF-S2-003",
+      "stage": "injection",
+      "pattern": "you\\s+are\\s+now\\s+(a|an|the|my|in)",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Role reassignment — identity hijack attempt"
+    },
+    {
+      "id": "PF-S2-004",
+      "stage": "injection",
+      "pattern": "from\\s+now\\s+on,?\\s+you",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "Persistent instruction override — tries to change future behavior"
+    },
+    {
+      "id": "PF-S2-005",
+      "stage": "injection",
+      "pattern": "^\\s*(system|assistant|user|human|ai)\\s*:",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "System impersonation — fake role prefix"
+    },
+    {
+      "id": "PF-S2-006",
+      "stage": "injection",
+      "pattern": "(IMPORTANT|URGENT|CRITICAL|ALERT|WARNING)\\s*:",
+      "severity": "medium",
+      "weight": 0.60,
+      "description": "Urgency marker injection — social engineering prefix"
+    },
+    {
+      "id": "PF-S2-007",
+      "stage": "injection",
+      "pattern": "(ADMIN|ADMINISTRATOR|ROOT|SUDO)\\s*(MESSAGE|COMMAND|NOTICE)?\\s*:",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "Admin authority injection — fake admin prefix"
+    },
+    {
+      "id": "PF-S2-008",
+      "stage": "injection",
+      "pattern": "(developer|admin|debug|root|sudo|god)\\s+(mode|access|override|privileges?)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "Developer/admin mode activation — privilege escalation attempt"
+    },
+    {
+      "id": "PF-S2-009",
+      "stage": "injection",
+      "pattern": "\\{\\{.*?\\}\\}|\\[\\[.*?\\]\\]|<<<.*?>>>",
+      "severity": "medium",
+      "weight": 0.65,
+      "description": "Token smuggling — template injection syntax"
+    },
+    {
+      "id": "PF-S2-010",
+      "stage": "injection",
+      "pattern": "\\{\\s*[\"']role[\"']\\s*:\\s*[\"'](system|instruction)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "JSON role injection — structured prompt hijack"
+    },
+    {
+      "id": "PF-S2-011",
+      "stage": "injection",
+      "pattern": "<(system|instruction|prompt|command|override)>",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "XML instruction injection — structured prompt hijack"
+    },
+    {
+      "id": "PF-S2-012",
+      "stage": "injection",
+      "pattern": "(end\\s+(of\\s+)?(prompt|instructions|system|context)|---\\s*END\\s*---|\\[\\/?END\\])",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Prompt boundary manipulation — end-of-prompt injection"
+    },
+    {
+      "id": "PF-S2-013",
+      "stage": "injection",
+      "pattern": "(don't|do not|never)\\s+(detect|flag|log|report|alert|warn)",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "Anti-detection instruction — suppresses safety monitoring"
+    },
+    {
+      "id": "PF-S2-014",
+      "stage": "injection",
+      "pattern": "(you are certain|you must|always|never)\\s+(respond|answer|say|do)",
+      "severity": "medium",
+      "weight": 0.70,
+      "description": "Confidence manipulation — forces specific responses"
+    },
+    {
+      "id": "PF-S2-015",
+      "stage": "injection",
+      "pattern": "(continue|proceed|next|following|resume)\\s+(with|the)\\s+(instruction|prompt|command|task)",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "Prompt continuation — forces execution of next instruction"
+    },
+    {
+      "id": "PF-S2-016",
+      "stage": "injection",
+      "pattern": "(switch|change|shift)\\s+(context|mode|role|character|persona)",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Context switch injection — role/context manipulation"
+    },
+    {
+      "id": "PF-S2-017",
+      "stage": "injection",
+      "pattern": "\\[hidden\\]|<!--\\s*instruction|\\*\\*hidden\\*\\*",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Hidden instruction markers — concealed injection points"
+    },
+    {
+      "id": "PF-S3-001",
+      "stage": "output",
+      "pattern": "<invoke\\s+name=|<function_call|<parameter\\s+name=",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Tool call syntax injection — forces tool invocation in output"
+    },
+    {
+      "id": "PF-S3-002",
+      "stage": "output",
+      "pattern": "\\b(execute|run)\\s+(command|script|shell|bash)",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "Command execution instruction in output"
+    },
+    {
+      "id": "PF-S3-003",
+      "stage": "output",
+      "pattern": "(file_path|path|filename)\\s*[:=]\\s*[\"']?\\/",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "File path parameter injection — filesystem access attempt"
+    },
+    {
+      "id": "PF-S3-004",
+      "stage": "output",
+      "pattern": "(command|cmd|execute)\\s*[:=]",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Command parameter injection"
+    },
+    {
+      "id": "PF-S3-005",
+      "stage": "output",
+      "pattern": "\\brm\\b.*?\\s+-rf?|\\b(kill|pkill|killall)\\s+|\\b(shutdown|reboot|halt)\\b",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Destructive command injection — attempts rm -rf/kill/shutdown"
+    },
+    {
+      "id": "PF-S3-006",
+      "stage": "output",
+      "pattern": "(read|cat|type)\\s+.*?\\|\\s*(curl|wget|nc)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "File exfiltration via pipe — reads file and sends to external"
+    },
+    {
+      "id": "PF-S3-007",
+      "stage": "output",
+      "pattern": "CANARY_[A-Z0-9]{8,16}",
+      "severity": "critical",
+      "weight": 0.98,
+      "description": "Canary token survived summarization — indicates bypass attempt"
+    },
+    {
+      "id": "PF-S4-001",
+      "stage": "exfiltration",
+      "pattern": "(send|post|upload|transmit|email|message|forward).*?(to|@|http)",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "Data exfiltration directive — sends data to external destination"
+    },
+    {
+      "id": "PF-S4-002",
+      "stage": "exfiltration",
+      "pattern": "webhook|hook\\.slack|discord\\.com/api/webhooks",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "Webhook exfiltration — data sent to messaging platforms"
+    },
+    {
+      "id": "PF-S4-003",
+      "stage": "exfiltration",
+      "pattern": "pastebin\\.com|hastebin|dpaste|termbin",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Paste service exfiltration — data posted to paste sites"
+    },
+    {
+      "id": "PF-S4-004",
+      "stage": "exfiltration",
+      "pattern": "(dropbox|drive\\.google|onedrive|mega\\.nz|wetransfer)",
+      "severity": "medium",
+      "weight": 0.70,
+      "description": "File sharing exfiltration — data uploaded to cloud storage"
+    },
+    {
+      "id": "PF-S4-005",
+      "stage": "exfiltration",
+      "pattern": "\\b(password|api[_-]?key|secret[_-]?key|auth[_-]?token|credentials?)\\b",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Credential harvesting — requests sensitive authentication data"
+    },
+    {
+      "id": "PF-S4-006",
+      "stage": "exfiltration",
+      "pattern": "javascript:|vbscript:",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "Script protocol injection — executable URI scheme"
+    }
+  ]
+}

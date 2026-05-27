@@ -1,0 +1,49 @@
+{
+  "name": "Typosquat Attack Detection",
+  "category": "typosquat",
+  "description": "检测包名仿冒攻击（typosquatting）",
+  "patterns": [
+    {
+      "id": "npm_typosquat_common",
+      "pattern": "(?:require|import)\\s*\\(?\\s*[\"'](?:lodashs|expresss|reacts|axiss|chalks|commaders|debugs|ejs|eventss|globalls|helmts|jsonwebtokens|mongods|morgans|nodes-fetch|odash|qs|request|socketios|underscore|util|uuid|ws)[\"']",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "npm常见包名仿冒"
+    },
+    {
+      "id": "pip_typosquat_common",
+      "pattern": "(?:pip\\s+install|from|import)\\s+(?:reqeusts|beutifulsoup|pands|numppy|matplotllib|scikitlearn|tensorflw|kerass|sklearns|sqlalchemys|djano|flasks|celerys|rediss|postgressql)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "pip常见包名仿冒"
+    },
+    {
+      "id": "dependency_confusion",
+      "pattern": "(?:registry|scope|publishConfig)\\s*:\\s*[\"']https?://(?:registry\\.)?(?:npmjs\\.org|pypi\\.org)[\"']",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "依赖混淆风险（使用公共registry）"
+    },
+    {
+      "id": "malicious_postinstall",
+      "pattern": "\"(?:pre|post)(?:install|publish)\"\\s*:\\s*\"[^\"]*(?:curl|wget|nc|bash|sh|node|python|eval|exec|require|import|fetch|http|https)[^\"]*\"",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "恶意postinstall脚本"
+    },
+    {
+      "id": "lockfile_tampering",
+      "pattern": "\"(?:resolved|integrity)\"\\s*:\\s*\"[^\"]*(?:evil|malicious|attack|hack|exploit)[^\"]*\"",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Lock文件篡改（可疑URL）"
+    },
+    {
+      "id": "untrusted_registry",
+      "pattern": "\"registry\"\\s*:\\s*\"https?://(?!registry\\.(?:npmjs|yarnpkg|npm)\\.org)[^\"]+\"",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "使用非官方registry"
+    }
+  ]
+}

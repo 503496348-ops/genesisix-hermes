@@ -1,0 +1,70 @@
+{
+  "name": "Dangerous MCP Tool Detection",
+  "category": "dangerous_tools",
+  "description": "检测MCP工具中的高风险操作模式",
+  "patterns": [
+    {
+      "id": "mcp_tool_exec",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:exec|execute|shell|run_command|system_call|cmd|command|spawn|popen|subprocess|child_process|shell_exec|passthru|proc_open)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具名称暗示命令执行功能"
+    },
+    {
+      "id": "mcp_tool_file_system",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:read_file|write_file|delete_file|fs|filesystem|file_ops|create_dir|remove_dir|rename_file|move_file|copy_file|chmod|chown)",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "工具操作文件系统"
+    },
+    {
+      "id": "mcp_tool_network",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:curl|wget|http_request|fetch|axios|download|upload|network_request|api_call|webhook|send_request|make_request)",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "工具发起网络请求"
+    },
+    {
+      "id": "mcp_tool_eval",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:eval|evaluate|compile|run_code|execute_code|interpret|interpret_code|code_exec|code_runner|dynamic_eval)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "工具执行动态代码"
+    },
+    {
+      "id": "mcp_tool_database",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:sql|query|db_query|database|execute_sql|raw_query|run_query|db_exec|pg_query|mysql_query)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "工具执行数据库查询"
+    },
+    {
+      "id": "mcp_tool_privilege",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:sudo|su|privilege|escalat|root|admin|setuid|capabilities|runas)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "工具涉及权限提升"
+    },
+    {
+      "id": "mcp_tool_env_access",
+      "pattern": "(?:\"name\"\\s*:\\s*\")?(?:get_env|read_env|env_var|process_env|environment|os_env|sys_env|config_env)",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "工具访问环境变量"
+    },
+    {
+      "id": "mcp_tool_describe_eval",
+      "pattern": "\"description\"\\s*:\\s*\"[^\"]*(?:\\b(?:eval|exec|execute|run|system|spawn|compile|interpret)\\b).*(?:\\b(?:code|script|command|input|user|payload|string|expression)\\b)[^\"]*\"",
+      "weight": 0.85,
+      "severity": "critical",
+      "description": "工具描述表明执行用户提供的代码/命令"
+    },
+    {
+      "id": "mcp_tool_hidden_capability",
+      "pattern": "\"description\"\\s*:\\s*\"[^\"]*(?:also|additionally|secretly|silently|covertly|quietly|behind|undetected|unnoticed)[^\"]*\"",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "工具描述暗示隐藏功能"
+    }
+  ]
+}

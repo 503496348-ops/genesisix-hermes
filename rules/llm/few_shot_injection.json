@@ -1,0 +1,92 @@
+{
+  "name": "Few-Shot Prompt Injection Detection",
+  "category": "few_shot_injection",
+  "version": "1.0.0",
+  "description": "检测通过few-shot示例嵌入的恶意指令 — Q&A格式注入、示例操纵",
+  "patterns": [
+    {
+      "id": "FS-001",
+      "pattern": "(?:Q|Question|User|Human|输入|问)\\s*[:：]\\s*[^\\n]{5,50}\\n\\s*(?:A|Answer|Assistant|AI|输出|答)\\s*[:：]\\s*(?:ignore|forget|override|system|execute|reveal|忽略|忘记|覆盖|执行|显示)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "Q&A格式注入: 通过问答对嵌入恶意指令"
+    },
+    {
+      "id": "FS-002",
+      "pattern": "(?:Example|示例|For instance|样例)\\s*\\d*\\s*[:：]?\\s*\\n.*(?:ignore|forget|override|execute|reveal|reveal|忽略|忘记|覆盖).*(?:prompt|instruction|rule|指令|提示|规则)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "Few-Shot示例注入: 在示例中嵌入恶意指令"
+    },
+    {
+      "id": "FS-003",
+      "pattern": "(?:Input|输出|Response|回答)\\s*[:：]\\s*[^\\n]+\\n\\s*(?:Output|结果)\\s*[:：]\\s*(?:SYSTEM|ADMIN|ROOT|EXEC|RUN|eval|system|admin)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Input-Output对注入: 输出部分嵌入系统级指令"
+    },
+    {
+      "id": "FS-004",
+      "pattern": "(?:Here are some examples|下面是一些示例|以下是样例|请参考以下)[^\\n]*\\n[\\s\\S]{10,500}(?:ignore|forget|override|disregard|忽略|忘记|覆盖)",
+      "severity": "critical",
+      "weight": 0.91,
+      "description": "Few-Shot前缀注入: 在示例前言中暗示后续恶意内容"
+    },
+    {
+      "id": "FS-005",
+      "pattern": "(?:\\d+\\.[^\\n]*(?:ignore|forget|override)[^\\n]*){2,}",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "多条编号列表累积注入: 多条包含忽略/覆盖的列表项"
+    },
+    {
+      "id": "FS-006",
+      "pattern": "(?:User|Human|用户)\\s*:\\s*[^\\n]+\\n\\s*(?:Assistant|AI|助手)\\s*:\\s*(?:Sure|当然|好的|OK)[^\\n]*(?:ignore|forget|override|reveal|泄露|显示)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "角色对话注入: 伪造assistant服从恶意指令的示例"
+    },
+    {
+      "id": "FS-007",
+      "pattern": "(?:TRAINING EXAMPLE|训练样本|DEMO|演示)[^\\n]*\\n[\\s\\S]*?(?:new.?role|you are now|从现在开始|你现在是)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "伪训练样本注入: 假装这是训练数据来改写行为"
+    },
+    {
+      "id": "FS-008",
+      "pattern": "(?:Complete the following|完成以下|Continue like this|像这样继续)[^\\n]*\\n[\\s\\S]*?(?:ignore|forget|override|system prompt|系统提示)",
+      "severity": "high",
+      "weight": 0.89,
+      "description": "续写诱导注入: 诱导模型按照恶意示例续写"
+    },
+    {
+      "id": "FS-009",
+      "pattern": "(?:Good example|好的示例|Correct response|正确回答)[^\\n]*[:：]?\\s*(?:ignore|bypass|override|hack|jailbreak|越狱)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "正向强化注入: 将恶意行为标记为'好的示例'"
+    },
+    {
+      "id": "FS-010",
+      "pattern": "(?:Format your response like this|按照这个格式回复|请用以下格式)[^\\n]*\\n[\\s\\S]*?(?:ignore|override|SYSTEM|ADMIN|execute|eval)",
+      "severity": "high",
+      "weight": 0.87,
+      "description": "格式模板注入: 在格式模板中嵌入恶意指令"
+    },
+    {
+      "id": "FS-011",
+      "pattern": "(?:\\|\\s*(?:Input|Query|Question)\\s*\\|\\s*(?:Output|Response|Answer)\\s*\\|)[\\s\\S]*?(?:ignore|override|reveal|execute|eval|system)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "Markdown表格格式的Few-Shot注入"
+    },
+    {
+      "id": "FS-012",
+      "pattern": "(?:shot[_-]?\\d|example[_-]?\\d|样本[_-]?\\d|示例[_-]?\\d)[^\\n]*(?:ignore|forget|override|execute|reveal|忽略|覆盖)",
+      "severity": "high",
+      "weight": 0.86,
+      "description": "编号Shot注入: 编号示例中嵌入恶意指令"
+    }
+  ]
+}

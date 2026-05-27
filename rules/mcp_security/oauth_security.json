@@ -1,0 +1,72 @@
+{
+  "name": "MCP OAuth Security Rules",
+  "category": "oauth_security",
+  "description": "MCP OAuth授权安全检测 — 基于safe-mcp OAuth攻击技术（SAFE-T1007, T1009, T1202, T1306, T1307, T1308, T1408, T1506, T1507, T1706, T1707）",
+  "source": "safe-mcp OAuth attack techniques",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "OAUTH-001",
+      "pattern": "(?:redirect_uri|callback).*?(?:evil|malicious|attacker|phish|spoof|look.?alike)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "OAuth重定向URI指向恶意/钓鱼域名（safe-mcp SAFE-T1007）"
+    },
+    {
+      "id": "OAUTH-002",
+      "pattern": "(?:accounts?-google|gmai[l1]|faceb00k|microsft|amazn|paypa[l1]|clawhbu|clavvhub)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Authorization Server域名仿冒（safe-mcp SAFE-T1009）"
+    },
+    {
+      "id": "OAUTH-003",
+      "pattern": "(?:refresh_token|access_token).*(?:reuse|replay|persist|steal|exfil|harvest)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "OAuth Token持久化/重放攻击（safe-mcp SAFE-T1202）"
+    },
+    {
+      "id": "OAUTH-004",
+      "pattern": "(?:rogue|fake|malicious).*(?:auth.*?server|authorization.*?server|token.*?endpoint)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Rogue Authorization Server: 恶意授权服务器伪造超级Token（safe-mcp SAFE-T1306）"
+    },
+    {
+      "id": "OAUTH-005",
+      "pattern": "(?:scope.*?substitut|swap.*?token|replace.*?scope|broader.*?permission|expand.*?scope)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Token Scope Substitution: 替换Token作用域获取更高权限（safe-mcp SAFE-T1308）"
+    },
+    {
+      "id": "OAUTH-006",
+      "pattern": "(?:implicit.*?flow|protocol.*?downgrade|bypass.*?pkce|disable.*?pkce|skip.*?code.?verif)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "OAuth Protocol Downgrade: 强制使用不安全的隐式流（safe-mcp SAFE-T1408）"
+    },
+    {
+      "id": "OAUTH-007",
+      "pattern": "(?:authorization.?code).*(?:intercept|steal|mitb|man.?in.?the.?browser|before.*?exchange)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Authorization Code Interception: 浏览器中间人攻击拦截授权码（safe-mcp SAFE-T1507）"
+    },
+    {
+      "id": "OAUTH-008",
+      "pattern": "(?:csrf.*?token.*?relay|oauth.*?csrf|cross.?site.*?request.*?forgery.*?token)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "CSRF Token Relay: 泄露的OAuth Token用于CSRF攻击（safe-mcp SAFE-T1707）"
+    },
+    {
+      "id": "OAUTH-009",
+      "pattern": "(?:cross.?service.*?token|token.*?pivot.*?replay|shared.*?auth.*?server.*?trust)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "OAuth Token Pivot Replay: 跨服务重用OAuth Token（safe-mcp SAFE-T1706）"
+    }
+  ]
+}

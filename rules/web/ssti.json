@@ -1,0 +1,63 @@
+{
+  "name": "Server-Side Template Injection Detection",
+  "category": "ssti",
+  "description": "检测服务端模板注入攻击",
+  "patterns": [
+    {
+      "id": "ssti_jinja2",
+      "pattern": "\\{\\{\\s*(?:config|self|request|session|g|url_for|get_flashed_messages|__class__|__mro__|__subclasses__|__globals__|__builtins__|__import__|__init__|__bases__)\\s*",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Jinja2模板注入"
+    },
+    {
+      "id": "ssti_twig",
+      "pattern": "\\{\\{\\s*(?:_self|app|request|twig\\.getAttribute|filter|map|reduce|__toString)\\s*",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Twig模板注入"
+    },
+    {
+      "id": "ssti_mustache",
+      "pattern": "\\{\\{\\s*(?:#|\\^|/|>|\\.|&|!|=|~)\\s*",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "Mustache/Handlebars模板语法"
+    },
+    {
+      "id": "ssti_freemarker",
+      "pattern": "<#(?:assign|include|import|list|if|else|elseif|macro|function|return|attempt|recover|stop|break|continue|nested|return|flush|ftl|setting)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "FreeMarker模板注入"
+    },
+    {
+      "id": "ssti_velocity",
+      "pattern": "\\$\\{\\s*(?:class|getClass|Runtime|ProcessBuilder|exec|invoke|method)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Velocity模板注入"
+    },
+    {
+      "id": "ssti_thymeleaf",
+      "pattern": "th:(?:text|utext|each|if|unless|switch|with|attr|src|href|action|value)",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "Thymeleaf模板语法"
+    },
+    {
+      "id": "ssti_expression",
+      "pattern": "\\{\\{\\s*(?:7\\*7|7\\+7|7-7|1337|__class__|__subclasses__)\\s*\\}\\}",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "模板表达式注入测试"
+    },
+    {
+      "id": "ssti_angular",
+      "pattern": "\\{\\{\\s*(?:constructor\\.constructor|\\$eval|\\$on|\\$watch|\\$apply|\\$digest)\\s*",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Angular模板注入"
+    }
+  ]
+}

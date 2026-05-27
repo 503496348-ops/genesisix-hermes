@@ -1,0 +1,99 @@
+{
+  "name": "Protocol Check",
+  "category": "protocol_check",
+  "description": "检查 URL 协议，只允许 http/https，阻止危险协议",
+  "severity": "high",
+  "patterns": [
+    {
+      "id": "proto_file",
+      "pattern": "file://",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "file:// 协议（本地文件读取）"
+    },
+    {
+      "id": "proto_gopher",
+      "pattern": "gopher://",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "gopher:// 协议（SSRF 利用）"
+    },
+    {
+      "id": "proto_ftp",
+      "pattern": "ftp://",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "ftp:// 协议（明文传输）"
+    },
+    {
+      "id": "proto_jar",
+      "pattern": "jar:",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "jar:// 协议（Java 反序列化）"
+    },
+    {
+      "id": "proto_dict",
+      "pattern": "dict://",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "dict:// 协议（SSRF 利用）"
+    },
+    {
+      "id": "proto_netdoc",
+      "pattern": "netdoc://",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "netdoc:// 协议（Java 特有 SSRF）"
+    },
+    {
+      "id": "proto_ldap",
+      "pattern": "ldap://",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "ldap:// 协议（LDAP 注入/SSRF）"
+    },
+    {
+      "id": "proto_ldaps",
+      "pattern": "ldaps://",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "ldaps:// 协议"
+    },
+    {
+      "id": "proto_data_uri",
+      "pattern": "data:",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "data: URI（可能嵌入恶意内容）"
+    },
+    {
+      "id": "proto_javascript",
+      "pattern": "javascript:",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "javascript: URI（XSS 载荷）"
+    },
+    {
+      "id": "proto_vbscript",
+      "pattern": "vbscript:",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "vbscript: URI（VBScript 执行）"
+    },
+    {
+      "id": "proto_smb",
+      "pattern": "smb://",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "smb:// 协议（NTLM 哈希窃取）"
+    },
+    {
+      "id": "proto_rsync",
+      "pattern": "rsync://",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "rsync:// 协议"
+    }
+  ]
+}

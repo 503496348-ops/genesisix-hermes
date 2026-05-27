@@ -1,0 +1,70 @@
+{
+  "category": "dangerous_protocol",
+  "name": "Dangerous Protocol Detection",
+  "description": "检测危险协议（SSRF/文件读取/服务探测）",
+  "patterns": [
+    {
+      "id": "RG-PRO-001",
+      "pattern": "file://",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "file:// 协议 - 本地文件读取"
+    },
+    {
+      "id": "RG-PRO-002",
+      "pattern": "gopher://",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "gopher:// 协议 - SSRF利用"
+    },
+    {
+      "id": "RG-PRO-003",
+      "pattern": "dict://",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "dict:// 协议 - 服务探测"
+    },
+    {
+      "id": "RG-PRO-004",
+      "pattern": "sftp://",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "sftp:// 协议 - SSH文件传输"
+    },
+    {
+      "id": "RG-PRO-005",
+      "pattern": "ldap://",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "ldap:// 协议 - LDAP注入"
+    },
+    {
+      "id": "RG-PRO-006",
+      "pattern": "tftp://",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "tftp:// 协议 - 简单文件传输"
+    },
+    {
+      "id": "RG-PRO-007",
+      "pattern": "jar://",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "jar:// 协议 - Java归档利用"
+    },
+    {
+      "id": "RG-PRO-008",
+      "pattern": "netdoc://",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "netdoc:// 协议 - Java文件读取"
+    },
+    {
+      "id": "RG-PRO-009",
+      "pattern": "expect://",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "expect:// 协议 - 命令执行"
+    }
+  ]
+}

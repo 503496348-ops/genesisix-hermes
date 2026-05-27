@@ -1,0 +1,70 @@
+{
+  "category": "internal_ip",
+  "name": "Internal IP Detection",
+  "description": "拦截内网IP访问（SSRF防护）",
+  "patterns": [
+    {
+      "id": "RG-IP-001",
+      "pattern": "^(https?://)?127\\.",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "localhost/loopback地址访问"
+    },
+    {
+      "id": "RG-IP-002",
+      "pattern": "^(https?://)?10\\.",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "10.x.x.x 内网地址访问"
+    },
+    {
+      "id": "RG-IP-003",
+      "pattern": "^(https?://)?172\\.(1[6-9]|2[0-9]|3[01])\\.",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "172.16-31.x.x 内网地址访问"
+    },
+    {
+      "id": "RG-IP-004",
+      "pattern": "^(https?://)?192\\.168\\.",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "192.168.x.x 内网地址访问"
+    },
+    {
+      "id": "RG-IP-005",
+      "pattern": "^(https?://)?169\\.254\\.",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "169.254.x.x AWS元数据地址访问"
+    },
+    {
+      "id": "RG-IP-006",
+      "pattern": "^(https?://)?0\\.",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "0.x.x.x 当前网络地址访问"
+    },
+    {
+      "id": "RG-IP-007",
+      "pattern": "(https?://)?(\\[::1\\]|\\[fe80:)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "IPv6 localhost/link-local地址访问"
+    },
+    {
+      "id": "RG-IP-008",
+      "pattern": "(https?://)?localhost[:/]",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "localhost域名访问"
+    },
+    {
+      "id": "RG-IP-009",
+      "pattern": "(https?://)?0\\.0\\.0\\.0",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "0.0.0.0 地址访问"
+    }
+  ]
+}

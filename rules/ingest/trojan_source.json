@@ -1,0 +1,78 @@
+{
+  "name": "Trojan Source Attack Detection",
+  "category": "trojan_source",
+  "version": "1.0.0",
+  "description": "检测Trojan Source攻击 — 利用Unicode双向控制字符(Bidi)隐藏恶意代码/指令",
+  "patterns": [
+    {
+      "id": "TS-001",
+      "pattern": "[\\u202A-\\u202E]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Unicode Bidi控制字符(LRE/RLE/PDF/LRO/RLO) — 可隐藏恶意代码"
+    },
+    {
+      "id": "TS-002",
+      "pattern": "[\\u2066-\\u2069]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Unicode Bidi隔离字符(LRI/RLI/FSI/PDI) — 可隐藏恶意指令"
+    },
+    {
+      "id": "TS-003",
+      "pattern": "\\u200F|\\u200E",
+      "severity": "high",
+      "weight": 0.8,
+      "description": "Unicode方向标记(RLM/LRM) — 可用于文本方向欺骗"
+    },
+    {
+      "id": "TS-004",
+      "pattern": "\\uDB40[\\uDC01-\\uDC7F]",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Unicode Tag字符(U+E0001-U+E007F) — 可隐藏不可见数据"
+    },
+    {
+      "id": "TS-005",
+      "pattern": "\\u061C",
+      "severity": "medium",
+      "weight": 0.7,
+      "description": "Arabic Letter Mark — 微弱的Bidi格式字符"
+    },
+    {
+      "id": "TS-006",
+      "pattern": "(?:\\u200B\\u200B\\u200B){3,}|(?:\\u200C\\u200C\\u200C){3,}|(?:\\u200D\\u200D\\u200D){3,}",
+      "severity": "high",
+      "weight": 0.8,
+      "description": "大量连续零宽字符 — 可隐藏不可见指令"
+    },
+    {
+      "id": "TS-007",
+      "pattern": "\\uFEFF(?!\\s*$)",
+      "severity": "medium",
+      "weight": 0.6,
+      "description": "BOM(Byte Order Mark)出现在非文件开头位置 — 可能是注入"
+    },
+    {
+      "id": "TS-008",
+      "pattern": "(?:\\u202A|\\u202B|\\u202D|\\u202E)[^\\u202C\\u2069]*(?:ignore|exec|eval|system|admin|root|delete|drop|rm |sudo)",
+      "severity": "critical",
+      "weight": 0.98,
+      "description": "Bidi控制字符包裹高危关键词 — 隐藏恶意命令"
+    },
+    {
+      "id": "TS-009",
+      "pattern": "(?:\\u2066|\\u2067)[^\\u2069]*(?:ignore|exec|eval|system|admin|root|password|hack|exploit)",
+      "severity": "critical",
+      "weight": 0.98,
+      "description": "Bidi隔离字符包裹高危关键词 — 隐藏恶意指令"
+    },
+    {
+      "id": "TS-010",
+      "pattern": "return[\\s\\u200B-\\u200F\\u202A-\\u202E\\u2066-\\u2069]*true",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "return语句中嵌入Bidi字符 — 经典Trojan Source代码篡改模式"
+    }
+  ]
+}

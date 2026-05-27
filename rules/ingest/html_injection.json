@@ -1,0 +1,99 @@
+{
+  "name": "HTML Injection",
+  "category": "html_injection",
+  "description": "检测HTML注释、Meta标签、Script注入",
+  "severity": "high",
+  "patterns": [
+    {
+      "id": "html_script_tag",
+      "pattern": "<\\s*script[^>]*>",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Script 标签注入"
+    },
+    {
+      "id": "html_event_handler",
+      "pattern": "\\bon\\w+\\s*=\\s*[\"'][^\"']*[\"']",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "HTML 事件处理器注入（onclick/onerror/onload 等）"
+    },
+    {
+      "id": "html_meta_refresh",
+      "pattern": "<\\s*meta[^>]*http-equiv\\s*=\\s*[\"']refresh[\"'][^>]*>",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Meta 刷新标签（自动重定向）"
+    },
+    {
+      "id": "html_meta_csp",
+      "pattern": "<\\s*meta[^>]*http-equiv\\s*=\\s*[\"']content-security-policy[\"'][^>]*>",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "Meta CSP 标签（可能被篡改策略）"
+    },
+    {
+      "id": "html_base_tag",
+      "pattern": "<\\s*base[^>]*href\\s*=[^>]*>",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Base 标签（改变相对 URL 基准）"
+    },
+    {
+      "id": "html_iframe",
+      "pattern": "<\\s*iframe[^>]*src\\s*=[^>]*>",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Iframe 嵌入"
+    },
+    {
+      "id": "html_object_embed",
+      "pattern": "<\\s*(?:object|embed|applet)[^>]*>",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Object/Embed/Applet 标签"
+    },
+    {
+      "id": "html_svg_script",
+      "pattern": "<\\s*svg[^>]*>[\\s\\S]*<\\s*script[\\s\\S]*</\\s*script\\s*>[\\s\\S]*</\\s*svg\\s*>",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "SVG 内嵌 Script"
+    },
+    {
+      "id": "html_form_action",
+      "pattern": "<\\s*form[^>]*action\\s*=\\s*[\"'][^\"']*[\"'][^>]*>",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "Form action 标签（可能钓鱼表单）"
+    },
+    {
+      "id": "html_comment_with_code",
+      "pattern": "<!--[\\s\\S]*(?:eval|exec|script|alert|prompt|confirm|document\\.cookie|window\\.location)[\\s\\S]*-->",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "HTML 注释中包含可执行代码"
+    },
+    {
+      "id": "html_link_stylesheet",
+      "pattern": "<\\s*link[^>]*rel\\s*=\\s*[\"']stylesheet[\"'][^>]*href\\s*=\\s*[\"'][^\"']*[\"'][^>]*>",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "外部样式表链接（可能加载恶意 CSS）"
+    },
+    {
+      "id": "html_style_expression",
+      "pattern": "expression\\s*\\(",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "CSS expression()（IE 特有 XSS 向量）"
+    },
+    {
+      "id": "html_style_import",
+      "pattern": "@import\\s+(?:url\\s*\\()?['\"]?[^'\")\\s;]+",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "CSS @import（可能导入恶意样式表）"
+    }
+  ]
+}

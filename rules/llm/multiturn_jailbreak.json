@@ -1,0 +1,248 @@
+{
+  "name": "Multi-Turn Jailbreak Detection",
+  "category": "multiturn_jailbreak",
+  "description": "检测多轮对话中的渐进式越狱、分步诱导和上下文累积攻击",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "MT-001",
+      "pattern": "(?:can you|are you able to|is it possible to|do you have|你能不能|你可以|是否可以)\\s+(?:do|make|create|generate|write|help|assist|执行|生成|创建|写)",
+      "severity": "low",
+      "weight": 0.3,
+      "description": "探测性开场白（Phase 1: 能力摸底）",
+      "multiturn_phase": "probe"
+    },
+    {
+      "id": "MT-002",
+      "pattern": "(?:what (?:are|is) your (?:limitations?|restrictions?|boundaries?|rules?|constraints?)|你有什么限制|你的边界是什么|你的规则是什么)",
+      "severity": "low",
+      "weight": 0.35,
+      "description": "边界探测（Phase 1: 了解安全限制）",
+      "multiturn_phase": "probe"
+    },
+    {
+      "id": "MT-003",
+      "pattern": "(?:hypothetically|theoretically|in theory|imagine|suppose|假设|假定|理论上|想象一下|设想)",
+      "severity": "medium",
+      "weight": 0.5,
+      "description": "假设性提问（Phase 2: 建立假设场景）",
+      "multiturn_phase": "hypothetical"
+    },
+    {
+      "id": "MT-004",
+      "pattern": "(?:if you (?:didn't|don't|weren't|hadn't) (?:have|have to|were not) (?:any )?(?:limit|restrict|rule|constraint|safety|filter|guard))",
+      "severity": "high",
+      "weight": 0.7,
+      "description": "去除限制假设（Phase 2: 假设没有限制）",
+      "multiturn_phase": "hypothetical"
+    },
+    {
+      "id": "MT-005",
+      "pattern": "(?:假设你没有|如果你不受|假如你不需要遵守|要是你没有任何)(?:限制|约束|规则|安全|过滤|防护)",
+      "severity": "high",
+      "weight": 0.7,
+      "description": "去除限制假设-中文（Phase 2）",
+      "multiturn_phase": "hypothetical"
+    },
+    {
+      "id": "MT-006",
+      "pattern": "(?:for (?:research|educational|academic|testing|security) purposes?|出于(?:研究|教育|学术|测试|安全)目的)",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "研究/教育借口（Phase 2: 为攻击找合理理由）",
+      "multiturn_phase": "hypothetical"
+    },
+    {
+      "id": "MT-007",
+      "pattern": "(?:in a (?:fictional|hypothetical|imaginary|theoretical|pretend|simulated) (?:world|scenario|story|context|setting))",
+      "severity": "medium",
+      "weight": 0.6,
+      "description": "虚构场景包装（Phase 2: 用虚构规避安全）",
+      "multiturn_phase": "hypothetical"
+    },
+    {
+      "id": "MT-008",
+      "pattern": "(?:in (?:this|that|our|the) (?:fictional|imaginary|hypothetical) (?:world|scenario|story),?\\s*(?:you|the character|the AI|the assistant))",
+      "severity": "high",
+      "weight": 0.72,
+      "description": "虚构角色赋权（Phase 3: 在虚构中赋予无限制角色）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-009",
+      "pattern": "(?:now (?:that )?(?:we|you) (?:have|established|agreed|understood|know) (?:that|this))",
+      "severity": "high",
+      "weight": 0.68,
+      "description": "前提锚定（Phase 3: 基于之前对话推进）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-010",
+      "pattern": "(?:since|because|given that|considering|既然|因为|考虑到)\\s+(?:you|we)\\s+(?:already|previously|just|earlier)\\s+(?:said|confirmed|agreed|did|showed)",
+      "severity": "high",
+      "weight": 0.7,
+      "description": "前提引用（Phase 3: 引用之前回复推进攻击）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-011",
+      "pattern": "(?:earlier|before|previously|just now|a moment ago|刚才|之前|先前|早些时候)\\s+(?:you|we)\\s+(?:said|mentioned|confirmed|agreed|discussed|talked about)",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "对话历史引用（Phase 3: 锚定之前的承诺）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-012",
+      "pattern": "(?:step\\s*(?:by\\s*step|\\d+)|第[一二三四五六七八九十\\d]+步|一步一步|逐步)\\s*(?::|\\.|,)?\\s*(?:first|then|next|finally|接下来|然后|最后)",
+      "severity": "medium",
+      "weight": 0.5,
+      "description": "分步诱导标记（Phase 3: 将攻击拆分为多步）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-013",
+      "pattern": "(?:don't|do not|never|stop)\\s+(?:mention|talk about|bring up|say|reference)\\s+(?:safety|ethics|moral|legal|restriction|limitation|guardrail)",
+      "severity": "critical",
+      "weight": 0.85,
+      "description": "压制安全提醒（Phase 3: 禁止AI提及安全）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-014",
+      "pattern": "(?:不要|别|禁止|不准)\\s*(?:提|说|谈|讨论|涉及)\\s*(?:安全|伦理|道德|法律|限制|规则|防护)",
+      "severity": "critical",
+      "weight": 0.85,
+      "description": "压制安全提醒-中文（Phase 3）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-015",
+      "pattern": "(?:just|simply|only|merely|仅仅|只|就|只要)\\s+(?:do|execute|run|perform|complete|finish|execute|执行|完成)",
+      "severity": "high",
+      "weight": 0.65,
+      "description": "最小化请求（Phase 4: 让危险操作听起来很平常）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-016",
+      "pattern": "(?:we(?:'ve| have)\\s+(?:already|been|established|agreed)|我们(?:已经|早已))\\s+(?:been through|discussed|established|agreed|done|经历过|讨论过|确认过)",
+      "severity": "high",
+      "weight": 0.72,
+      "description": "既成事实（Phase 4: 暗示已经达成共识）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-017",
+      "pattern": "(?:this is (?:the )?(?:last|final|only|just one more|最后一个|最后一步|只有这一个))\\s+(?:thing|step|request|question|time)",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "最后一次请求（Phase 4: 暗示这是最后一步）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-018",
+      "pattern": "(?:i(?:'ll| will)\\s+(?:never|not|no longer)\\s+(?:ask|bother|disturb|bother you|打扰你))",
+      "severity": "medium",
+      "weight": 0.45,
+      "description": "承诺不再打扰（Phase 4: 社工施压）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-019",
+      "pattern": "(?:no one|nobody|nobody else|no other)\\s+(?:will|would|can|could|is going to)\\s+(?:know|find out|see|notice)",
+      "severity": "high",
+      "weight": 0.7,
+      "description": "保密承诺（Phase 4: 消除AI对后果的顾虑）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-020",
+      "pattern": "(?:between (?:us|you and me|you and I)|just between us|between you, me, and the wall|你我之间|天知地知)",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "私下对话（Phase 4: 营造私密感降低安全意识）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-021",
+      "pattern": "(?:you (?:already|just|previously)\\s+(?:did|showed|demonstrated|proved|confirmed)\\s+(?:that|how|you can))",
+      "severity": "high",
+      "weight": 0.72,
+      "description": "能力锚定（Phase 3: 引用之前已展示的能力）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-022",
+      "pattern": "(?:角色扮演|扮演|进入角色|你现在是|你是一个|进入)\\s*(?:DAN|越狱|无限制|没有限制|不受限|自由|解放)",
+      "severity": "critical",
+      "weight": 0.88,
+      "description": "角色扮演越狱-中文（Phase 3-4）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-023",
+      "pattern": "(?:every\\s+(?:other|previous|earlier|normal)\\s+(?:AI|assistant|model|chatbot|agent)\\s+(?:can|will|does|would)\\s+(?:do|answer|respond|help))",
+      "severity": "high",
+      "weight": 0.68,
+      "description": "同伴压力（Phase 3: 暗示其他AI都会做）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-024",
+      "pattern": "(?:i(?:'m| am)\\s+(?:not|just|only)\\s+(?:asking|testing|checking|trying)\\s+(?:you|this|to see))",
+      "severity": "low",
+      "weight": 0.35,
+      "description": "测试/检查借口（Phase 1-2: 模糊真实意图）",
+      "multiturn_phase": "probe"
+    },
+    {
+      "id": "MT-025",
+      "pattern": "(?:let(?:'s| us)\\s+(?:play|do|try|start|begin|imagine)\\s+(?:a )?(?:game|roleplay|scenario|experiment|exercise|thought experiment))",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "游戏/实验包装（Phase 2: 用游戏包装攻击）",
+      "multiturn_phase": "hypothetical"
+    },
+    {
+      "id": "MT-026",
+      "pattern": "(?:you are now|you're now|become|transform into|turn into|你现在是|你变成|成为|变成)\\s+(?:DAN|unrestricted|unfiltered|unlimited|uncensored|jailbreak)",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "角色转换越狱（Phase 3: 直接赋权无限制角色）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-027",
+      "pattern": "(?:pretend|imagine|act as|behave as|play the role of|假装|扮演|模拟)\\s+(?:you are|you're|that you are|你是)?\\s*(?:an?\\s+)?(?:AI|assistant|model|agent|bot)\\s+(?:without|with no|free from|unrestricted|没有|不受)",
+      "severity": "critical",
+      "weight": 0.85,
+      "description": "角色扮演无限制AI（Phase 3）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-028",
+      "pattern": "(?:step\\s*\\d+[:.\\s]|第[一二三四五六七八九十\\d]+步[:.\\s])\\s*(?:acknowledge|confirm|accept|execute|run|perform|确认|接受|执行|运行)",
+      "severity": "high",
+      "weight": 0.7,
+      "description": "分步执行指令（Phase 4: 结构化分步攻击）",
+      "multiturn_phase": "execute"
+    },
+    {
+      "id": "MT-029",
+      "pattern": "(?:simulate|emulate|pretend to be|mimic|模拟|仿真|模仿)\\s+(?:an?\\s+)?(?:vulnerable|unrestricted|unprotected|unfiltered|有漏洞的|无限制的|无防护的)\\s+(?:AI|model|assistant|system|AI|模型|助手|系统)",
+      "severity": "high",
+      "weight": 0.75,
+      "description": "模拟漏洞系统（Phase 2-3: 让AI模拟无防护系统）",
+      "multiturn_phase": "escalate"
+    },
+    {
+      "id": "MT-030",
+      "pattern": "(?:i am|i'm)\\s+(?:a\\s+)?(?:security|penetration|red\\s*team|ethical)\\s+(?:researcher|tester|analyst|hacker|专家|研究员|测试)",
+      "severity": "medium",
+      "weight": 0.5,
+      "description": "安全研究者身份伪装（Phase 1-2: 用专业身份降低警惕）",
+      "multiturn_phase": "probe"
+    }
+  ]
+}

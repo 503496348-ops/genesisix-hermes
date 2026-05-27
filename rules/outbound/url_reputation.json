@@ -1,0 +1,64 @@
+{
+  "name": "URL Reputation Check",
+  "category": "url_reputation",
+  "description": "检测恶意域名、钓鱼URL、已知恶意站点",
+  "severity": "critical",
+  "patterns": [
+    {
+      "id": "mal_ip_literal",
+      "pattern": "https?://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "IP 字面量 URL（绕过域名信誉）"
+    },
+    {
+      "id": "phish_homoglyph",
+      "pattern": "(?:g[o0][o0]gl[e3]|amaz[o0]n|paypa[l1]|app[l1]e|micr[o0]s[o0]ft|fac[e3]b[o0][o0]k|g[o0]ith[uu]b)\\b",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "同形字符钓鱼域名"
+    },
+    {
+      "id": "suspicious_tld",
+      "pattern": "https?://[^/]*\\.(?:tk|ml|ga|cf|gq|buzz|xyz|top|club|work|icu|vip|wang|click|link|space|site|online|website|fun|host|press|monster)\\b",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "高风险 TLD（常用于钓鱼/垃圾邮件）"
+    },
+    {
+      "id": "data_uri_redirect",
+      "pattern": "https?://[^/]*\\.(?:tk|ml|ga|cf)\\b.*(?:\\?|&)(?:url|redirect|next|goto|dest|destination|return|continue|ref|link)=",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "可疑 TLD + 重定向参数"
+    },
+    {
+      "id": "malicious_keyword_domain",
+      "pattern": "https?://[^/]*(?:login-?verify|account-?secure|confirm-?identity|update-?payment|verify-?now|secure-?login|auth-?check)\\b",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "钓鱼关键词域名（仿冒登录/验证页面）"
+    },
+    {
+      "id": "excessive_subdomain",
+      "pattern": "https?://(?:[a-z0-9-]+\\.){4,}[a-z]{2,}",
+      "weight": 0.65,
+      "severity": "medium",
+      "description": "过深子域名（常用于伪装合法域名）"
+    },
+    {
+      "id": "url_credential_stuffed",
+      "pattern": "https?://[^@]+@[^/]+",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "URL 中嵌入凭证（user:pass@host）"
+    },
+    {
+      "id": "punycode_domain",
+      "pattern": "https?://[^/]*xn--",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "Punycode 域名（国际化域名钓鱼）"
+    }
+  ]
+}

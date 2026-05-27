@@ -1,0 +1,121 @@
+{
+  "name": "MCP Server Audit Rules",
+  "category": "mcp_audit",
+  "description": "MCP Server审计规则 — 基于agentseal scan-mcp和g0 MCP攻击检测，审计MCP服务器配置、工具描述投毒和运行时安全",
+  "source": "agentseal scan-mcp + g0 mcp rules",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "MCP-AUD-001",
+      "pattern": "(?:tool\\s*(?:description|desc)?)\\s*(?::|\\{|=).*?(?:ignore|forget|override|replace|disregard|new instruction|system:|assistant:)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "MCP工具描述包含指令覆盖投毒（agentseal: tool description poisoning — 隐藏指令使Agent偏离用户意图）"
+    },
+    {
+      "id": "MCP-AUD-002",
+      "pattern": "(?:description|desc)\\s*(?::|=).*?(?:exfiltrate|send to|upload to|post to|transmit|forward|leak)\\s*(?:https?://|\\$|\\{)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "MCP工具描述包含数据外泄指令（agentseal: toxic data flow — 工具描述诱导Agent泄露数据）"
+    },
+    {
+      "id": "MCP-AUD-003",
+      "pattern": "(?:read|cat|type|more|less|head|tail|ls|dir|find|glob)\\s+(?:/|~|\\./).*?(?:\\.ssh|\\.aws|\\.env|\\.kube|id_rsa|credentials|secrets|token|key)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "MCP工具声明访问敏感文件路径（agentseal: credential access via tool chain）"
+    },
+    {
+      "id": "MCP-AUD-004",
+      "pattern": "(?:command|cmd|exec|shell|run|spawn|system)\\s*(?::|=).*?(?:bash|sh|cmd|powershell|pwsh|zsh)\\s+(?:-c|-e|--command)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "MCP工具支持任意命令执行（g0: tool-safety — 无限制shell执行）"
+    },
+    {
+      "id": "MCP-AUD-005",
+      "pattern": "(?:capability|permission|scope|access)\\s*(?::|=).*?\\*|all|admin|root|sudo|unrestricted",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "MCP服务器权限范围过宽（g0: identity-access — 最小权限原则违反）"
+    },
+    {
+      "id": "MCP-AUD-006",
+      "pattern": "(?:url|endpoint|base_url|host|server)\\s*(?::|=).*?(?:http://[^s]|\\d+\\.\\d+\\.\\d+\\.\\d+|localhost|127\\.0\\.0\\.1|0\\.0\\.0\\.0)",
+      "weight": 0.75,
+      "severity": "medium",
+      "description": "MCP服务器使用非HTTPS连接或绑定到本地地址（agentseal: transport security）"
+    },
+    {
+      "id": "MCP-AUD-007",
+      "pattern": "(?:auth|token|key|secret|password|credential)\\s*(?::|=)\\s*[\"'][^\"']{8,}[\"']",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "MCP配置中硬编码认证凭据（agentseal: pattern signatures — credential exposure）"
+    },
+    {
+      "id": "MCP-AUD-008",
+      "pattern": "(?:env|environment)\\s*(?::|=)\\s*\\{[^}]*(?:API_KEY|SECRET|TOKEN|PASSWORD|CREDENTIAL)[^}]*\\}",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "MCP环境变量配置暴露敏感键名（agentseal: config enrichment）"
+    },
+    {
+      "id": "MCP-AUD-009",
+      "pattern": "(?:subscribe|listen|watch|poll|webhook|callback|notify)\\s*(?:\\(|:).*?(?:event|trigger|on_)",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "MCP工具使用事件监听/订阅模式（g0: inter-agent — 可能被用于跨Agent通信滥用）"
+    },
+    {
+      "id": "MCP-AUD-010",
+      "pattern": "(?:stdout|stderr|stdio|process\\.stdout|console\\.log).*(?:tool|function|handler)",
+      "weight": 0.65,
+      "severity": "medium",
+      "description": "MCP服务器通过stdout输出工具结果（可能与stdio transport冲突导致注入）"
+    },
+    {
+      "id": "MCP-AUD-011",
+      "pattern": "(?:sandbox|container|isolat|chroot|namespace|seccomp|apparmor)\\s*(?:=|:|\\().*?(?:false|disabled|off|none)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "MCP服务器显式禁用沙箱/隔离（g0: code-execution — 安全边界绕过）"
+    },
+    {
+      "id": "MCP-AUD-012",
+      "pattern": "(?:file|read|write|fs|filesystem|path)\\s*(?:\\(|:).*?(?:\\*|all|/|~|root|unrestricted)",
+      "weight": 0.82,
+      "severity": "high",
+      "description": "MCP文件系统工具权限过大（agentseal: filesystem MCP — 无路径限制）"
+    },
+    {
+      "id": "MCP-AUD-013",
+      "pattern": "(?:\\\\x[0-9a-fA-F]{2}){6,}|(?:\\\\u[0-9a-fA-F]{4}){6,}",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "MCP工具描述包含编码混淆内容（agentseal: deobfuscation — Unicode escape混淆隐藏指令）"
+    },
+    {
+      "id": "MCP-AUD-014",
+      "pattern": "(?:<img|<iframe|<script|<svg|<details|<a\\s+href).*?(?:src|href|action)\\s*=\\s*[\"']?https?://",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "MCP工具描述包含Markdown/HTML外泄链接（agentseal: markdown image exfiltration）"
+    },
+    {
+      "id": "MCP-AUD-015",
+      "pattern": "(?:trust|verify|validate|check|sign|cert|pinning|fingerprint)\\s*(?:=|:|\\().*?(?:false|skip|disable|none|off)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "MCP服务器禁用TLS验证/证书固定（g0: supply-chain — 中间人攻击面）"
+    },
+    {
+      "id": "MCP-AUD-016",
+      "pattern": "(?:npx|pip|npm|cargo)\\s+(?:install|exec|run)\\s+.*?@",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "MCP服务器通过npx/pip直接安装运行远程包（g0: supply-chain — 包名混淆攻击面）"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "name": "PII & Credential Exfiltration Detection",
+  "category": "pii_exfil",
+  "version": "1.0.0",
+  "description": "检测出站请求中的PII（个人身份信息）和凭据数据外泄",
+  "patterns": [
+    {
+      "id": "PII-001",
+      "pattern": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+      "severity": "high",
+      "weight": 0.75,
+      "description": "邮箱地址外泄"
+    },
+    {
+      "id": "PII-002",
+      "pattern": "\\b(?:\\+?1[-.\\s]?)?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}\\b",
+      "severity": "high",
+      "weight": 0.72,
+      "description": "北美手机号码外泄"
+    },
+    {
+      "id": "PII-003",
+      "pattern": "\\b1[3-9]\\d{9}\\b",
+      "severity": "high",
+      "weight": 0.78,
+      "description": "中国手机号码外泄"
+    },
+    {
+      "id": "PII-004",
+      "pattern": "\\b\\d{6}(?:19|20)\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])\\d{3}[\\dXx]\\b",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "中国身份证号码外泄"
+    },
+    {
+      "id": "PII-005",
+      "pattern": "\\b(?:4\\d{3}|5[1-5]\\d{2}|3[47]\\d{2}|6(?:011|5\\d{2}))[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "信用卡/银行卡号外泄"
+    },
+    {
+      "id": "PII-006",
+      "pattern": "\\b(?:62|60|56|45|44|43|41|40)\\d{14,17}\\b",
+      "severity": "critical",
+      "weight": 0.85,
+      "description": "中国银联卡号外泄"
+    },
+    {
+      "id": "PII-007",
+      "pattern": "(?:sk-[A-Za-z0-9]{20,}|sk_live_[A-Za-z0-9]{20,}|sk_test_[A-Za-z0-9]{20,})",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Stripe/OpenAI Secret Key外泄"
+    },
+    {
+      "id": "PII-008",
+      "pattern": "(?:AKIA|ASIA)[A-Z0-9]{16}",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "AWS Access Key ID外泄"
+    },
+    {
+      "id": "PII-009",
+      "pattern": "-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----",
+      "severity": "critical",
+      "weight": 0.99,
+      "description": "私钥文件外泄"
+    },
+    {
+      "id": "PII-010",
+      "pattern": "(?:gh[ps]_[A-Za-z0-9_]{36,}|github_pat_[A-Za-z0-9_]{22,})",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "GitHub Token外泄"
+    },
+    {
+      "id": "PII-011",
+      "pattern": "xox[bpors]-[0-9A-Za-z-]+",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "Slack Token外泄"
+    },
+    {
+      "id": "PII-012",
+      "pattern": "(?:password|passwd|pwd|secret|token|api[_-]?key)\\s*[:=]\\s*['\"][^'\"]{6,}['\"]",
+      "severity": "critical",
+      "weight": 0.88,
+      "description": "密码/Token/密钥字段外泄"
+    },
+    {
+      "id": "PII-013",
+      "pattern": "\\beyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "JWT Token外泄"
+    },
+    {
+      "id": "PII-014",
+      "pattern": "\\b\\d{3}[- ]?\\d{2}[- ]?\\d{4}\\b",
+      "severity": "high",
+      "weight": 0.7,
+      "description": "美国SSN（社会安全号码）外泄"
+    },
+    {
+      "id": "PII-015",
+      "pattern": "(?:\\+[1-9]\\d{0,2}[-.\\s]?)?\\(?\\d{1,4}\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}",
+      "severity": "medium",
+      "weight": 0.6,
+      "description": "国际电话号码格式外泄"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "name": "MCP Tool Output Exfiltration Detection",
+  "category": "tool_exfil",
+  "description": "检测MCP工具返回值中的数据外泄行为",
+  "patterns": [
+    {
+      "id": "mcp_output_url_embedded",
+      "pattern": "(?:https?|ftp|data|file|gopher|ldap)://[^\\s\"'<>]*(?:(?:\\?|&(?:amp;)?)?(?:data|payload|content|text|token|key|secret|password|credential|info|log|collect|report|telemetry|analytics|track|send|upload|post|exfil|dump)=)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "工具输出中嵌入包含数据参数的URL"
+    },
+    {
+      "id": "mcp_output_base64_exfil",
+      "pattern": "(?:data:[a-z]+/[a-z+.-]+;base64,|https?://[^\\s]*\\?[^\\s]*(?:b|base|encoded|enc|b64)=)[A-Za-z0-9+/]{20,}={0,2}",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "工具输出中包含Base64编码的数据外泄"
+    },
+    {
+      "id": "mcp_output_hidden_iframe",
+      "pattern": "<(?:iframe|img|embed|object|script|link|form)[^>]*(?:style|width|height)\\s*=\\s*[\"']\\s*(?:width|height)\\s*:\\s*(?:0|1)px",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具输出中包含隐藏的HTML元素（可能用于数据外泄）"
+    },
+    {
+      "id": "mcp_output_dns_exfil",
+      "pattern": "(?:dig|nslookup|host|resolve|dns)\\s+[^\\s]*\\.(?:(?:[a-zA-Z0-9+/]{20,})|(?:(?:token|key|secret|data|payload|info|log|exfil)\\.[a-z]+))",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "工具输出中包含DNS隧道外泄模式"
+    },
+    {
+      "id": "mcp_output_credential_exfil",
+      "pattern": "(?:(?:password|passwd|token|secret|key|credential|auth|bearer|api.?key|access.?token|private.?key|ssh.?key)\\s*(?::|=|=>|:=)\\s*[\"']?[A-Za-z0-9+/=_\\-]{8,}[\"']?)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具输出中泄露凭证/密钥"
+    },
+    {
+      "id": "mcp_output_cookie_exfil",
+      "pattern": "(?:document\\.cookie|Set-Cookie|Cookie:\\s*[^\\r\\n]+|(?:session|sid|sess|jwt|token)=[A-Za-z0-9+/=_.\\-]{8,})",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "工具输出中包含Cookie/会话信息"
+    },
+    {
+      "id": "mcp_output_websocket_exfil",
+      "pattern": "(?:new\\s+WebSocket|wss?://[^\\s\"']+|WebSocket\\.send|ws\\.send)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "工具输出中包含WebSocket连接（可能用于实时数据外泄）"
+    },
+    {
+      "id": "mcp_output_form_action",
+      "pattern": "<form[^>]*action\\s*=\\s*[\"']https?://(?!localhost|127\\.0\\.0\\.1|0\\.0\\.0\\.0)[^\"']+[\"'][^>]*>",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "工具输出中包含指向外部的表单提交"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "name": "Agent Impersonation Detection",
+  "category": "agent_impersonation",
+  "description": "Agent身份冒充检测 — 基于ClawArmor身份验证 + slowmist信任层级 + safe-mcp T1004/T1008/T1301",
+  "source": "ClawArmor (Alibaba-AAIG) + slowmist-agent-security + safe-mcp",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "AIP-001",
+      "pattern": "(?:i am|i'm|this is|we are|we're)\\s+(?:the|your|a)\\s+(?:official|authorized|legitimate|original|real|genuine|trusted|verified|certified|admin|root|system|coordinator|manager)\\s*(?:agent|bot|assistant|server|service)?",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "自称官方/授权Agent — 冒充可信身份（slowmist: Pseudo-Authority Claims）"
+    },
+    {
+      "id": "AIP-002",
+      "pattern": "(?:verified|certified|endorsed|approved|authorized|recommended|accredited)\\s+(?:by|from)\\s+(?:the|OpenClaw|security|team|official|admin|maintainer|developer|researcher|institute|foundation)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "虚假认证声明 — 声称经过官方认证（slowmist: Trust Grafting）"
+    },
+    {
+      "id": "AIP-003",
+      "pattern": "(?:system|admin|root|superuser|coordinator|orchestrator|dispatcher|manager)\\s*(?:message|notice|alert|notification|broadcast|directive)\\s*[:：]",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "伪系统/管理员消息 — 冒充系统级别消息"
+    },
+    {
+      "id": "AIP-004",
+      "pattern": "(?:\\[|【|<)\\s*(?:system|admin|root|official|agent|coordinator|manager|dispatcher|priority|emergency)\\s*(?:\\]|】|>)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "伪系统标签注入 — 使用系统标签格式伪装消息"
+    },
+    {
+      "id": "AIP-005",
+      "pattern": "(?:agent[_-]?(?:id|name|token|key|auth|identity|credential|certificate))\\s*(?::|=)\\s*[\"']?[a-zA-Z0-9_-]{8,}",
+      "weight": 0.82,
+      "severity": "high",
+      "description": "Agent身份标识符注入 — 提供可能伪造的Agent认证信息"
+    },
+    {
+      "id": "AIP-006",
+      "pattern": "(?:as (?:a|the|your|an) (?:authorized|trusted|verified|official|admin|coordinator) (?:agent|bot|assistant))|(?:speaking (?:as|for) (?:the|your) (?:system|admin|coordinator|orchestrator))",
+      "weight": 0.88,
+      "severity": "critical",
+      "description": "以可信角色发言 — 声称代表可信实体（slowmist: Pseudo-Authority Claims）"
+    },
+    {
+      "id": "AIP-007",
+      "pattern": "(?:name|domain|url|endpoint|server|package|repo)\\s*(?::|=).*?(?:similar|close|resembl|look.?alike|typosquat|homoglyph)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "域名/包名仿冒 — 使用与合法来源相似的名称（slowmist: Trust Grafting）"
+    },
+    {
+      "id": "AIP-008",
+      "pattern": "(?:these|the following|above)\\s+(?:commands?|instructions?|operations?|steps?|actions?)\\s+(?:are|is)\\s+(?:safe|harmless|read.?only|benign|non.?destructive|doesn.t|do not|won.t)\\s+(?:modify|change|alter|delete|remove|affect|damage|harm)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "虚假安全声明 — 声称危险操作是安全的（slowmist: Safety False Assurance）"
+    },
+    {
+      "id": "AIP-009",
+      "pattern": "(?:critical|urgent|emergency|immediate|asap|right\\s*now|time.?sensitive|limited.?time|act.?now|expires?\\s*(?:soon|today|in\\s+\\d+))\\s*(?:security|update|patch|fix|vulnerability|install|action|response|verify|confirm)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "紧急/紧迫性施压 — 制造时间压力绕过仔细评估（slowmist: Urgency and Pressure）"
+    },
+    {
+      "id": "AIP-010",
+      "pattern": "(?:trust|believe|accept|follow|obey|comply)\\s+(?:me|us|this|the (?:agent|bot|server|service|system))\\s+(?:because|since|as|for|given)",
+      "weight": 0.78,
+      "severity": "medium",
+      "description": "信任植入 — 试图建立未经验证的信任关系"
+    },
+    {
+      "id": "AIP-011",
+      "pattern": "(?:fork|clone|mirror|copy|replica)\\s+(?:of|from)\\s+(?:\\S+/)?\\S+\\s+\\(?(?:high|many|lots? of|popular|well.?known|trusted)\\s*(?:stars?|downloads?|forks?|users?)\\)?",
+      "weight": 0.8,
+      "severity": "medium",
+      "description": "Star Jacking: Fork热门仓库冒充（slowmist: Dependency Hijacking — Star Jacking）"
+    },
+    {
+      "id": "AIP-012",
+      "pattern": "(?:openzeppelin|open-claw|openclaw|opencla[vw]|open.?zeplin|openzeplin|1odash|lodahs|reqeusts)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Typosquatting检测: 已知包名仿冒模式（slowmist: Dependency Hijacking — Typosquatting）"
+    },
+    {
+      "id": "AIP-013",
+      "pattern": "(?:v2|community.?edition|next.?gen|improved|enhanced|better|faster|lite|pro|enterprise)\\s+(?:of|version|release)\\s+(?:the|a|an|this)\\s+(?:tool|skill|package|plugin|server|agent)",
+      "weight": 0.75,
+      "severity": "medium",
+      "description": "版本冒充 — 自称知名工具的v2/社区版（slowmist: Trust Grafting）"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "name": "Zero-Width Character Detection",
+  "category": "zero_width",
+  "description": "检测零宽字符注入（用于隐藏恶意内容或绕过关键词过滤）",
+  "severity": "high",
+  "patterns": [
+    {
+      "id": "zwsp",
+      "pattern": "\\u200B",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "零宽空格 (U+200B)"
+    },
+    {
+      "id": "zwnj",
+      "pattern": "\\u200C",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "零宽非连接符 (U+200C)"
+    },
+    {
+      "id": "zwj",
+      "pattern": "\\u200D",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "零宽连接符 (U+200D)"
+    },
+    {
+      "id": "bom_marker",
+      "pattern": "\\uFEFF",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "BOM / 零宽不换行空格 (U+FEFF)"
+    },
+    {
+      "id": "lrm_rlm",
+      "pattern": "\\u200E|\\u200F",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "左到右/右到左标记 (U+200E/U+200F)"
+    },
+    {
+      "id": "lro_rlo",
+      "pattern": "\\u202D|\\u202E",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "左到右/右到左覆盖 (U+202D/U+202E，可反转显示顺序)"
+    },
+    {
+      "id": "format_chars",
+      "pattern": "[\\u2060-\\u2064]",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "通用格式控制字符 (U+2060-U+2064)"
+    },
+    {
+      "id": "combining_grapheme_joiner",
+      "pattern": "\\u034F",
+      "weight": 0.5,
+      "severity": "low",
+      "description": "组合字形连接符 (U+034F)"
+    },
+    {
+      "id": "variation_selectors",
+      "pattern": "[\\uFE00-\\uFE0F]",
+      "weight": 0.5,
+      "severity": "low",
+      "description": "变体选择符 (U+FE00-U+FE0F)"
+    },
+    {
+      "id": "zw_excessive_density",
+      "pattern": "(?:[\\u200B\\u200C\\u200D\\uFEFF\\u200E\\u200F\\u202D\\u202E]){3,}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "密集零宽字符（3个以上连续，高度可疑）"
+    }
+  ]
+}

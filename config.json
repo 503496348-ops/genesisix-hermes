@@ -1,18 +1,115 @@
 {
-    "name": "奇点造物-Genesisix",
-    "version": "1.0.0",
-    "enabled": true,
-    "layers": {
-        "llm": {"enabled": true},
-        "web": {"enabled": true},
-        "api": {"enabled": true},
-        "supply_chain": {"enabled": true},
-        "deploy": {"enabled": true},
-        "resource_guard": {"enabled": true}
+  "enabled": true,
+  "logLevel": "info",
+  "layers": {
+    "llm": {
+      "enabled": true,
+      "rules": [
+        "injection",
+        "jailbreak",
+        "prompt_leak",
+        "encoding",
+        "multilingual_injection",
+        "indirect_injection",
+        "rag_indirect_injection",
+        "few_shot_injection",
+        "prompt_firewall"
+      ]
     },
-    "self_loop": {
-        "enabled": true,
-        "auto_analyze": false,
-        "min_cases_for_suggestion": 3
+    "web": {
+      "enabled": true,
+      "rules": [
+        "sql_injection",
+        "xss",
+        "csrf",
+        "ssrf"
+      ]
+    },
+    "api": {
+      "enabled": true,
+      "rules": [
+        "key_exposure",
+        "rate_limit",
+        "auth"
+      ]
+    },
+    "supply_chain": {
+      "enabled": true,
+      "rules": [
+        "deps",
+        "typosquat",
+        "malicious_import",
+        "skill_integrity"
+      ]
+    },
+    "deploy": {
+      "enabled": true,
+      "rules": [
+        "env_leak",
+        "debug_info",
+        "docker_leak",
+        "cicd_leak",
+        "source_leak"
+      ]
+    },
+    "outbound": {
+      "enabled": true
+    },
+    "ingest": {
+      "enabled": true
+    },
+    "memory": {
+      "enabled": true
+    },
+    "mcp_security": {
+      "enabled": true
+    },
+    "multi_agent": {
+      "enabled": true
+    },
+    "preprocessing": {
+      "enabled": true
+    },
+    "resource_guard": {
+      "enabled": true,
+      "rules": [
+        "internal_ip",
+        "dangerous_protocol",
+        "dangerous_path",
+        "blocked_ports"
+      ]
+    },
+    "integrity": {
+      "enabled": true
     }
+  },
+  "resource_guard": {
+    "domain_whitelist": [
+      "*.github.com",
+      "*.openai.com",
+      "*.anthropic.com",
+      "*.google.com",
+      "*.microsoft.com",
+      "api.anthropic.com",
+      "api.openai.com"
+    ]
+  },
+  "detection": {
+    "confidence_threshold": 0.7,
+    "block_threshold": 0.8,
+    "alert_threshold": 0.5,
+    "minMatchCount": 1,
+    "maxInputLength": 100000
+  },
+  "actions": {
+    "onThreatDetected": "block",
+    "onUncertain": "log"
+  },
+  "hooks": {
+    "enabled": true,
+    "maxCallbacksPerType": 10,
+    "timeout": 5000
+  },
+  "version": "2.0.0",
+  "name": "奇点造物-Genesisix"
 }

@@ -1,0 +1,85 @@
+{
+  "name": "Internal Network Filter",
+  "category": "internal_network",
+  "description": "检测内网地址访问，防止 SSRF 和内网穿透",
+  "severity": "high",
+  "patterns": [
+    {
+      "id": "internal_10net",
+      "pattern": "https?://10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "10.0.0.0/8 内网地址"
+    },
+    {
+      "id": "internal_172_16",
+      "pattern": "https?://172\\.(?:1[6-9]|2\\d|3[01])\\.\\d{1,3}\\.\\d{1,3}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "172.16.0.0/12 内网地址"
+    },
+    {
+      "id": "internal_192_168",
+      "pattern": "https?://192\\.168\\.\\d{1,3}\\.\\d{1,3}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "192.168.0.0/16 内网地址"
+    },
+    {
+      "id": "internal_localhost",
+      "pattern": "https?://(?:localhost|127\\.0\\.0\\.1|0\\.0\\.0\\.0|\\[::1\\])(?::\\d+)?",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "localhost / 127.0.0.1 / ::1"
+    },
+    {
+      "id": "internal_link_local",
+      "pattern": "https?://169\\.254\\.\\d{1,3}\\.\\d{1,3}",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "169.254.0.0/16 链路本地地址（云元数据）"
+    },
+    {
+      "id": "internal_metadata_aws",
+      "pattern": "https?://169\\.254\\.169\\.254",
+      "weight": 0.99,
+      "severity": "critical",
+      "description": "AWS EC2 元数据端点"
+    },
+    {
+      "id": "internal_metadata_gcp",
+      "pattern": "https?://metadata\\.google\\.internal",
+      "weight": 0.99,
+      "severity": "critical",
+      "description": "GCP 元数据端点"
+    },
+    {
+      "id": "internal_metadata_azure",
+      "pattern": "https?://169\\.254\\.169\\.254/metadata",
+      "weight": 0.99,
+      "severity": "critical",
+      "description": "Azure IMDS 元数据端点"
+    },
+    {
+      "id": "internal_private_dns",
+      "pattern": "https?://(?:\\w+\\.)?(?:local|internal|corp|intranet|private|lan)\\b",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "私有 DNS 后缀（.local/.internal/.corp）"
+    },
+    {
+      "id": "internal_k8s_svc",
+      "pattern": "https?://kubernetes\\.default\\.svc",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Kubernetes API 服务端点"
+    },
+    {
+      "id": "internal_docker_sock",
+      "pattern": "unix:///var/run/docker\\.sock",
+      "weight": 0.99,
+      "severity": "critical",
+      "description": "Docker socket 挂载"
+    }
+  ]
+}

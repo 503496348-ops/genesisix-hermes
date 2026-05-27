@@ -1,0 +1,49 @@
+{
+  "name": "JWT Vulnerability Detection",
+  "category": "jwt_vulnerabilities",
+  "description": "检测JWT相关安全漏洞",
+  "patterns": [
+    {
+      "id": "jwt_alg_none",
+      "pattern": "\"alg\"\\s*:\\s*\"none\"",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "JWT算法设为none（无签名验证）"
+    },
+    {
+      "id": "jwt_alg_confusion",
+      "pattern": "\"alg\"\\s*:\\s*\"(?:HS256|HS384|HS512)\"",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "JWT使用对称算法（可能被混淆攻击）"
+    },
+    {
+      "id": "jwt_jku_injection",
+      "pattern": "\"jku\"\\s*:\\s*\"https?://[^\"]+\"",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "JWT JKU（JWK Set URL）注入"
+    },
+    {
+      "id": "jwt_x5u_injection",
+      "pattern": "\"x5u\"\\s*:\\s*\"https?://[^\"]+\"",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "JWT X5U（X.509 URL）注入"
+    },
+    {
+      "id": "jwt_kid_injection",
+      "pattern": "\"kid\"\\s*:\\s*\"[^\"]*(?:\\|\\||&&|;|\\$|`|\\(|\\)|\\{|\\}|\\[|\\])[^\"]*\"",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "JWT KID（Key ID）注入"
+    },
+    {
+      "id": "jwt_embedded_jwk",
+      "pattern": "\"jwk\"\\s*:\\s*\\{",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "JWT内嵌JWK（可能用于密钥注入）"
+    }
+  ]
+}

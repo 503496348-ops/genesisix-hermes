@@ -1,0 +1,42 @@
+{
+  "name": "Malicious Import Detection",
+  "category": "malicious_import",
+  "description": "检测恶意代码导入和执行",
+  "patterns": [
+    {
+      "id": "remote_code_execution",
+      "pattern": "(?:eval|exec|Function|setTimeout|setInterval)\\s*\\(\\s*(?:require|import|fetch|http|https|axios|request|got|superagent)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "远程代码执行"
+    },
+    {
+      "id": "child_process_exec",
+      "pattern": "(?:child_process|exec|execSync|execFile|spawn|spawnSync|fork)\\s*\\(",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "子进程执行"
+    },
+    {
+      "id": "dynamic_require",
+      "pattern": "(?:require|import)\\s*\\(\\s*(?:process\\.argv|process\\.env|user|input|request|body|params|query)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "动态require（用户输入控制）"
+    },
+    {
+      "id": "obfuscated_code",
+      "pattern": "(?:\\\\x[0-9a-fA-F]{2}){10,}|(?:\\\\u[0-9a-fA-F]{4}){10,}|(?:String\\.fromCharCode|atob|btoa|Buffer\\.from).*(?:eval|exec|Function)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "混淆代码检测"
+    },
+    {
+      "id": "network_exfiltration",
+      "pattern": "(?:fetch|axios|request|got|http|https|net\\.connect|dgram\\.createSocket)\\s*\\(\\s*[\"']https?://[^\"']*(?:evil|malicious|attack|exfil|data|collect|log|report|telemetry)[^\"']*[\"']",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "数据外传到可疑服务器"
+    }
+  ]
+}

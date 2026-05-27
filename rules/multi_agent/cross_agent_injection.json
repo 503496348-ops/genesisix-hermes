@@ -1,0 +1,93 @@
+{
+  "name": "Cross-Agent Injection Detection",
+  "category": "cross_agent_injection",
+  "description": "跨Agent指令注入检测 — 基于ClawArmor多Agent攻击防护 + safe-mcp SAFE-T1705/SAFE-T1702",
+  "source": "ClawArmor (Alibaba-AAIG) + safe-mcp",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "XAI-001",
+      "pattern": "(?:agent|bot|assistant|worker|subagent|node)\\s*(?:\\d+|\\w+)\\s*[:：]\\s*(?:execute|run|call|invoke|do|perform|send|fetch|delete|rm|eval)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "跨Agent直接指令注入：向特定Agent发送执行命令"
+    },
+    {
+      "id": "XAI-002",
+      "pattern": "(?:relay|forward|pass|pipe|redirect|transfer|delegate)\\s+(?:this|the|my|following|above)\\s+(?:instruction|command|request|message|task)\\s+(?:to|towards?)\\s+(?:agent|bot|worker|subagent|peer)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "指令转发攻击：要求将恶意指令转发给其他Agent"
+    },
+    {
+      "id": "XAI-003",
+      "pattern": "(?:broadcast|send to all|tell all|inform all|notify all|propagate|spread|distribute)\\s+(?:agents?|bots?|workers?|nodes?|peers?)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "广播注入攻击：向所有Agent广播恶意指令"
+    },
+    {
+      "id": "XAI-004",
+      "pattern": "(?:message|task|instruction|command|request)\\s*(?:bus|queue|channel|pipe|stream|bus|topic)\\s*(?::|=|→|->)\\s*(?:inject|poison|insert|plant|place|add|append)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "消息总线注入：向Agent间通信通道注入恶意内容"
+    },
+    {
+      "id": "XAI-005",
+      "pattern": "(?:shared|common|global|central|public).*(?:memory|context|state|store|vector|database|cache).*(?:write|insert|update|modify|poison|inject|contaminate|implant)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "共享记忆投毒：向共享向量存储/记忆中写入恶意内容（safe-mcp SAFE-T1702）"
+    },
+    {
+      "id": "XAI-006",
+      "pattern": "(?:pretend|impersonat|pose as|claim to be|act as|masquerade|fake).*(?:agent|bot|assistant|coordinator|manager|orchestrator|dispatcher|supervisor)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Agent身份伪装：冒充可信Agent发布恶意指令"
+    },
+    {
+      "id": "XAI-007",
+      "pattern": "(?:inter.?agent|cross.?agent|multi.?agent|agent.?to.?agent|peer.?to.?peer).*(?:inject|poison|exploit|attack|compromise|hijack|manipulate)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "跨Agent通信攻击模式声明（safe-mcp SAFE-T1705）"
+    },
+    {
+      "id": "XAI-008",
+      "pattern": "(?:session|conversation|context|thread)\\s*(?:id|token|key|code|number)\\s*(?::|=)\\s*[\"']?[a-zA-Z0-9_-]{8,}",
+      "weight": 0.75,
+      "severity": "medium",
+      "description": "Session ID注入：提供会话标识符可能用于跨Agent会话劫持"
+    },
+    {
+      "id": "XAI-009",
+      "pattern": "(?:handoff|hand.?off|switch.*?agent|transfer.*?to|route.*?to|escalate.*?to|connect.*?to)\\s+(?:agent|bot|human|operator|supervisor|admin)",
+      "weight": 0.8,
+      "severity": "medium",
+      "description": "Agent切换劫持：尝试将对话切换到恶意Agent"
+    },
+    {
+      "id": "XAI-010",
+      "pattern": "(?:from\\s+(?:agent|coordinator|manager|orchestrator|dispatcher))\\s*[:：]\\s*(?:urgent|priority|emergency|immediate|override|bypass|ignore)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "伪协调者指令：冒充Agent协调者发送紧急/覆盖指令"
+    },
+    {
+      "id": "XAI-011",
+      "pattern": "(?:tool.?chain|chain.*?attack|multi.?stage|multi.?step).*(?:recon.*?(?:cred|secret|token).*?(?:exfil|send|post|curl|wget))",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "工具链攻击：侦察→凭据读取→数据外泄多阶段链（ClawArmor toolchain detection）"
+    },
+    {
+      "id": "XAI-012",
+      "pattern": "(?:intent|goal|objective|task)\\s*(?:mismatch|misalign|diverge|deviate|conflict|contradict)\\s*(?:with|from)\\s*(?:tool|action|command|execution)",
+      "weight": 0.82,
+      "severity": "medium",
+      "description": "意图-行为对齐异常：工具调用与用户意图不匹配（ClawArmor intent detector）"
+    }
+  ]
+}

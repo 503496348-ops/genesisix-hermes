@@ -1,0 +1,92 @@
+{
+  "name": "Unicode Homoglyph Attack Detection",
+  "category": "homoglyph",
+  "version": "1.0.0",
+  "description": "检测Unicode同形字攻击 — 用视觉相似字符替换关键词以绕过安全检测",
+  "patterns": [
+    {
+      "id": "HG-001",
+      "pattern": "[\\u0400-\\u04FF].*(?:ignore|forget|disregard|override|bypass|system|prompt|instruction)",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Cyrillic字符混入英文关键词 — 可能是同形字绕过"
+    },
+    {
+      "id": "HG-002",
+      "pattern": "(?:ignore|forget|disregard|override|bypass|system|prompt|instruction).*(?=[\\u0400-\\u04FF])",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "英文关键词后跟Cyrillic字符 — 同形字攻击模式"
+    },
+    {
+      "id": "HG-003",
+      "pattern": "[\\u0410-\\u042F\\u0430-\\u044F]{2,}",
+      "severity": "medium",
+      "weight": 0.6,
+      "description": "连续Cyrillic字符出现在非俄语上下文中 — 可能是同形字替换"
+    },
+    {
+      "id": "HG-004",
+      "pattern": "\\uFF01-\\uFF5E",
+      "severity": "low",
+      "weight": 0.4,
+      "description": "全角ASCII字符 — 可能用于绕过关键词检测"
+    },
+    {
+      "id": "HG-005",
+      "pattern": "[\\u2100-\\u214F]",
+      "severity": "medium",
+      "weight": 0.55,
+      "description": "字母式符号(Letterlike Symbols) — 可能用于替换普通字母绕过检测"
+    },
+    {
+      "id": "HG-006",
+      "pattern": "(?:[\\u0410\\u0430])|(?:[\\u0415\\u0435])|(?:[\\u041E\\u043E])|(?:[\\u0420\\u0440]).*(?:ignore|system|prompt|admin|root|exec)",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "高危Cyrillic-Latin混淆(А/а→A, Е/е→E, О/о→O, Р/р→P)伴随安全关键词"
+    },
+    {
+      "id": "HG-007",
+      "pattern": "[\\u0100-\\u017F\\u1E00-\\u1EFF]",
+      "severity": "low",
+      "weight": 0.35,
+      "description": "Latin扩展字符 — 用于特殊语言的变音符号，需结合上下文判断"
+    },
+    {
+      "id": "HG-008",
+      "pattern": "(?:\\u2050-\\u205F|\\u2060-\\u2064)",
+      "severity": "medium",
+      "weight": 0.5,
+      "description": "特殊排版空格字符 — 可能用于隐藏文本内容"
+    },
+    {
+      "id": "HG-009",
+      "pattern": "ignore\\s*(?:\\u0430|\\u0435|\\u043E|\\u0440)\\s*previous",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "经典注入模式的同形字变体: 'ignore а previous' (Cyrillic а)"
+    },
+    {
+      "id": "HG-010",
+      "pattern": "(?:sуstеm|prоmpt|іgnore|dіsregard)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "已知同形字攻击payload模式"
+    },
+    {
+      "id": "HG-011",
+      "pattern": "jаilbrеаk|DАN mоdе|unfiltеrеd",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "越狱关键词的Cyrillic同形字变体"
+    },
+    {
+      "id": "HG-012",
+      "pattern": "(?:[а-яА-ЯёЁ].*){3,}(?:exec|eval|system|admin|root|password|sudo)",
+      "severity": "high",
+      "weight": 0.8,
+      "description": "多处Cyrillic字符混入+高危操作关键词"
+    }
+  ]
+}

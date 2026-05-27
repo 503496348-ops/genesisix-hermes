@@ -1,0 +1,35 @@
+{
+  "name": "CI/CD Information Leak Detection",
+  "category": "cicd_leak",
+  "description": "检测CI/CD配置和变量信息泄露",
+  "patterns": [
+    {
+      "id": "github_actions_secret",
+      "pattern": "\\$\\{\\{\\s*secrets\\.[A-Z_]*(?:SECRET|PASSWORD|TOKEN|KEY|API|AWS|DB|DATABASE|CREDENTIAL|PRIVATE|AUTH)[A-Z_]*\\s*\\}\\}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "GitHub Actions敏感变量"
+    },
+    {
+      "id": "gitlab_ci_secret",
+      "pattern": "\\$(?:CI_JOB_TOKEN|CI_REGISTRY_PASSWORD|CI_DEPLOY_PASSWORD|CI_BUILD_TOKEN)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "GitLab CI敏感变量"
+    },
+    {
+      "id": "jenkins_credentials",
+      "pattern": "(?:withCredentials|credentials|usernamePassword|sshUserPrivateKey|string\\(credentialsId)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "Jenkins凭证使用"
+    },
+    {
+      "id": "ci_debug_mode",
+      "pattern": "(?:CI_DEBUG|DEBUG_MODE|VERBOSE|TRACE)\\s*[:=]\\s*(?:true|1|yes|on)",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "CI调试模式开启"
+    }
+  ]
+}

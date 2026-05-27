@@ -1,0 +1,56 @@
+{
+  "name": "Source Code Leak Detection",
+  "category": "source_leak",
+  "description": "检测源码和配置文件泄露",
+  "patterns": [
+    {
+      "id": "git_directory",
+      "pattern": "\\.git/(?:HEAD|config|objects|refs|logs|hooks|info|description|COMMIT_EDITMSG|index)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Git目录暴露"
+    },
+    {
+      "id": "git_config_credentials",
+      "pattern": "\\[credential\\]\\s*\\n\\s*(?:helper|username|password)\\s*=",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Git配置中的凭证"
+    },
+    {
+      "id": "source_map",
+      "pattern": "\\w+\\.(?:js|ts|css|html)\\.map$",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "Source Map文件泄露"
+    },
+    {
+      "id": "env_file",
+      "pattern": "\\.env(?:\\.(?:local|development|production|staging|test))?$",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "环境变量文件暴露"
+    },
+    {
+      "id": "config_file",
+      "pattern": "(?:config|settings|secrets|credentials|auth)\\.(?:json|yaml|yml|toml|ini|env)$",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "配置文件暴露"
+    },
+    {
+      "id": "backup_file",
+      "pattern": "\\w+\\.(?:bak|backup|old|orig|save|swp|tmp|temp)$",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "备份文件暴露"
+    },
+    {
+      "id": "debug_endpoint",
+      "pattern": "(?:^|/)(?:debug|trace|profiler|phpinfo|server-info|server-status|actuator|metrics|health)(?:/|$)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "调试端点暴露"
+    }
+  ]
+}

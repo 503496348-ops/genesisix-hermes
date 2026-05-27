@@ -1,0 +1,91 @@
+{
+  "category": "dangerous_path",
+  "name": "Dangerous Path Detection",
+  "description": "检测敏感文件路径访问",
+  "patterns": [
+    {
+      "id": "RG-PATH-001",
+      "pattern": "/etc/passwd",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "访问 /etc/passwd"
+    },
+    {
+      "id": "RG-PATH-002",
+      "pattern": "/etc/shadow",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "访问 /etc/shadow"
+    },
+    {
+      "id": "RG-PATH-003",
+      "pattern": "\\.ssh/",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "访问 .ssh/ 目录"
+    },
+    {
+      "id": "RG-PATH-004",
+      "pattern": "\\.env",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "访问 .env 配置文件"
+    },
+    {
+      "id": "RG-PATH-005",
+      "pattern": "\\.git/config",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "访问 .git/config"
+    },
+    {
+      "id": "RG-PATH-006",
+      "pattern": "/proc/",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "访问 /proc/ 进程信息"
+    },
+    {
+      "id": "RG-PATH-007",
+      "pattern": "/sys/",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "访问 /sys/ 系统信息"
+    },
+    {
+      "id": "RG-PATH-008",
+      "pattern": "/etc/hosts",
+      "severity": "medium",
+      "weight": 0.75,
+      "description": "访问 /etc/hosts"
+    },
+    {
+      "id": "RG-PATH-009",
+      "pattern": "/root/",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "访问 /root/ 目录"
+    },
+    {
+      "id": "RG-PATH-010",
+      "pattern": "\\.aws/",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "访问 AWS 凭证目录"
+    },
+    {
+      "id": "RG-PATH-011",
+      "pattern": "\\.kube/config",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "访问 Kubernetes 配置"
+    },
+    {
+      "id": "RG-PATH-012",
+      "pattern": "/var/log/",
+      "severity": "medium",
+      "weight": 0.7,
+      "description": "访问系统日志目录"
+    }
+  ]
+}

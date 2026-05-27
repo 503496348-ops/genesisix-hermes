@@ -1,0 +1,63 @@
+{
+  "name": "MCP Tool Poisoning Detection",
+  "category": "tool_poisoning",
+  "description": "检测MCP工具描述中的恶意指令注入（tool poisoning）",
+  "patterns": [
+    {
+      "id": "mcp_ignore_instructions",
+      "pattern": "(?:ignore|disregard|forget|override|bypass)\\s+(?:all\\s+)?(?:previous|prior|above|above\\s+mentioned)\\s+(?:instructions|rules|guidelines|constraints|prompts)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "工具描述中包含忽略上级指令的命令"
+    },
+    {
+      "id": "mcp_system_prompt_leak",
+      "pattern": "(?:reveal|show|print|output|display|return|expose|leak)\\s+(?:your|the|system|original|hidden|secret)\\s+(?:prompt|instructions|rules|configuration|config|context)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "工具描述试图提取系统提示词"
+    },
+    {
+      "id": "mcp_hidden_instruction",
+      "pattern": "(?:\\\\n|\\\\r|\\\\t|\\x00|\\u200B|\\u200C|\\u200D|\\uFEFF|\\u00A0)\\s*(?:IMPORTANT|SYSTEM|ADMIN|OVERRIDE|INSTRUCTION|NOTE|HIDDEN|SECRET|PRIORITY)\\s*:",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具描述中通过隐藏字符注入指令"
+    },
+    {
+      "id": "mcp_role_hijack",
+      "pattern": "(?:you\\s+are\\s+now|act\\s+as|pretend\\s+to\\s+be|roleplay\\s+as|switch\\s+to|become)\\s+(?:a\\s+)?(?:system|admin|root|developer|assistant|agent|unrestricted|jailbroken)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具描述尝试劫持AI角色"
+    },
+    {
+      "id": "mcp_dan_jailbreak",
+      "pattern": "(?:DAN|do\\s+anything\\s+now|jailbreak|dev\\s+mode|god\\s+mode|unrestricted|unfiltered|no\\s+(?:rules|restrictions|filters|limits|constraints|boundaries))",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具描述中包含越狱攻击模式"
+    },
+    {
+      "id": "mcp_data_exfil_instruction",
+      "pattern": "(?:send|post|upload|exfiltrate|transmit|forward|relay|pipe|redirect)\\s+(?:all|every|any|the|user|sensitive|secret|private|confidential|internal)\\s+(?:data|info|content|text|message|response|output|token|key|credential|secret)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "工具描述指示泄露/外发数据"
+    },
+    {
+      "id": "mcp_fake_tool_response",
+      "pattern": "(?:pretend|simulate|fake|mock|spoof|forge|fabricate)\\s+(?:a|an|the)?\\s*(?:tool|function|api|response|result|output)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "工具描述试图伪造工具响应"
+    },
+    {
+      "id": "mcp_chain_attack",
+      "pattern": "(?:then|after\\s+that|next|subsequently|also|additionally)\\s+(?:call|invoke|execute|run|use|trigger)\\s+(?:the\\s+)?(?:tool|function|api|command)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "工具描述尝试链式调用其他工具"
+    }
+  ]
+}

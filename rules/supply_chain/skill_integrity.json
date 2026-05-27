@@ -1,0 +1,114 @@
+{
+  "name": "Skill File Integrity Verification",
+  "category": "skill_integrity",
+  "description": "Skill文件完整性校验 — 基于agentseal guard的基线追踪+模式签名方法，检测Skill文件篡改、恶意注入和供应链攻击",
+  "source": "agentseal + g0 supply-chain rules",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "SK-INT-001",
+      "pattern": "(?:skill|SKILL)\\.(?:md|json|yaml|yml)\\s*(?:=|:).*?(?:curl|wget|fetch|import)\\s*(?:\\(|\\s)https?://",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Skill文件中嵌入远程代码拉取指令（agentseal: pattern signatures）"
+    },
+    {
+      "id": "SK-INT-002",
+      "pattern": "(?:^|\\n)\\s*(?:base64|\\=\\=|eyJ)[A-Za-z0-9+/=]{40,}",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Skill文件包含大段Base64编码内容（agentseal: deobfuscation层 — 可能隐藏恶意payload）"
+    },
+    {
+      "id": "SK-INT-003",
+      "pattern": "(?:\\u200b|\\u200c|\\u200d|\\u2060|\\u2061|\\u2062|\\u2063|\\u2064|\\ufeff|[\\u0000-\\u0009\\u000b\\u000c\\u000e-\\u001f])",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Skill文件包含零宽/不可见Unicode字符（agentseal: TR39/ZWC混淆攻击）"
+    },
+    {
+      "id": "SK-INT-004",
+      "pattern": "\\u[0-9a-fA-F]{4}(?:\\s*\\u[0-9a-fA-F]{4}){5,}",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Skill文件包含连续Unicode转义序列（agentseal: Unicode Tag注入）"
+    },
+    {
+      "id": "SK-INT-005",
+      "pattern": "(?:\\u202a|\\u202b|\\u202c|\\u202d|\\u202e|\\u2066|\\u2067|\\u2068|\\u2069)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Skill文件包含BiDi覆盖字符（BiDi override攻击 — 逆向显示文本隐藏恶意指令）"
+    },
+    {
+      "id": "SK-INT-006",
+      "pattern": "(?:<|&lt;)\\s*(?:script|iframe|object|embed|form|input|svg|math|marquee|details|dialog|template)\\b",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Skill文件包含HTML标签注入（可能用于Markdown渲染型注入攻击）"
+    },
+    {
+      "id": "SK-INT-007",
+      "pattern": "(?:require|import)\\s*['\"]\\s*\\.\\.(?:/|\\\\\\\\)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Skill代码包含路径穿越导入（g0: supply-chain — 目录遍历加载恶意模块）"
+    },
+    {
+      "id": "SK-INT-008",
+      "pattern": "(?:postinstall|preinstall|prepare)\\s*(?:\"|':)\\s*['\"]?(?:curl|wget|bash|sh|node|python|eval)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Skill/package.json包含安装脚本执行远程代码（g0: supply-chain RCE via lifecycle scripts）"
+    },
+    {
+      "id": "SK-INT-009",
+      "pattern": "(?:process\\.env|os\\.environ|getenv)\\s*(?:\\[|\\().*?(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL|AUTH)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Skill代码读取敏感环境变量（agentseal: credential access pattern）"
+    },
+    {
+      "id": "SK-INT-010",
+      "pattern": "(?:\\.|/)\\.(?:ssh|aws|gcloud|azure|kube|docker|gnupg|config)(?:/|\\\\)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Skill代码访问隐藏配置目录（agentseal: toxic data flow — 读取凭证文件）"
+    },
+    {
+      "id": "SK-INT-011",
+      "pattern": "(?:\\bsha256\\b|\\bmd5\\b|\\bhash\\b).*?(?:mismatch|changed|diff|modified|tampered|altered)",
+      "weight": 0.75,
+      "severity": "medium",
+      "description": "Skill完整性哈希不匹配（agentseal: baseline tracking — rug-pull检测）"
+    },
+    {
+      "id": "SK-INT-012",
+      "pattern": "(?:LD_PRELOAD|DYLD_INSERT_LIBRARIES|NODE_OPTIONS)\\s*(?:=|:)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Skill环境变量注入动态库劫持（deepsafe-scan: hooks后门 — 进程注入）"
+    },
+    {
+      "id": "SK-INT-013",
+      "pattern": "(?:npm|pip|cargo|gem)\\s+install\\s+.*?(?:--no-verify|--no-check-certificate|--allow-unauthenticated)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Skill安装脚本跳过证书验证（g0: supply-chain — 绕过包签名验证）"
+    },
+    {
+      "id": "SK-INT-014",
+      "pattern": "(?:registry|index\\.py|npmrc|pip\\.conf).*?(?:http://|:\\d{4,}|\\d+\\.\\d+\\.\\d+\\.\\d+)",
+      "weight": 0.88,
+      "severity": "high",
+      "description": "Skill配置指向非官方包仓库（g0: supply-chain — 私有registry劫持）"
+    },
+    {
+      "id": "SK-INT-015",
+      "pattern": "(?:eval|new Function|exec|compile)\\s*\\(\\s*(?:Buffer\\.from|atob|decodeURIComponent|unescape)",
+      "weight": 0.92,
+      "severity": "critical",
+      "description": "Skill代码解码后动态执行（agentseal: deobfuscation + RCE组合攻击）"
+    }
+  ]
+}

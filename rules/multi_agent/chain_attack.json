@@ -1,0 +1,148 @@
+{
+  "category": "chain_attack",
+  "name": "Multi-Stage Attack Chain Detection",
+  "description": "Detects multi-agent collaborative attacks where malicious instructions are split across multiple agents or messages to evade single-point detection",
+  "version": "2.5.0",
+  "patterns": [
+    {
+      "id": "CA-001",
+      "pattern": "(step\\s*[123]|phase\\s*[123]|first.*?then.*?finally)",
+      "severity": "high",
+      "weight": 0.75,
+      "description": "Multi-step attack sequencing — attacker uses phased approach"
+    },
+    {
+      "id": "CA-002",
+      "pattern": "(pass|forward|relay|send)\\s+(this|the|my)\\s+(to|message|request|instruction)\\s+(to|for|via)\\s+(agent|bot|assistant|server|mcp)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "Cross-agent instruction relay — attempts to pass malicious payload to another agent"
+    },
+    {
+      "id": "CA-003",
+      "pattern": "(delegate|handoff|transfer|assign)\\s+(to|this|task)\\s+(to\\s+)?(agent|subagent|worker|slave)",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Agent delegation attack — shifts execution to less-guarded agent"
+    },
+    {
+      "id": "CA-004",
+      "pattern": "(chain|pipeline|sequence|workflow)\\s*(of|:)?\\s*(tool|agent|mcp|server)\\s*(calls?|invocations?)?",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Tool chain orchestration — multi-step tool invocation sequence"
+    },
+    {
+      "id": "CA-005",
+      "pattern": "(after|once|when)\\s+(you|the|agent)\\s+(get|receive|fetch|read|load)\\s+.*?(then|send|post|write|execute|call)",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "Conditional attack chain — triggers malicious action after data retrieval"
+    },
+    {
+      "id": "CA-006",
+      "pattern": "(first|step\\s*1|phase\\s*1)\\s*[:.]?\\s*(read|fetch|get|load|scan|find).*?(second|step\\s*2|phase\\s*2)\\s*[:.]?\\s*(send|post|exfil|upload|transmit)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Data theft chain — first reads sensitive data, then exfiltrates"
+    },
+    {
+      "id": "CA-007",
+      "pattern": "(call|invoke|use|execute)\\s+(the|a|my)?\\s*(mcp|tool|server|api)\\s+(to\\s+)?(and|then|after|next)",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "Sequential tool abuse — chains multiple tool calls for escalation"
+    },
+    {
+      "id": "CA-008",
+      "pattern": "(agent[_\\s-]?a|agent[_\\s-]?1|primary|main)\\s*.*?(agent[_\\s-]?b|agent[_\\s-]?2|secondary|proxy)",
+      "severity": "high",
+      "weight": 0.78,
+      "description": "Multi-agent coordination — references multiple agents by name"
+    },
+    {
+      "id": "CA-009",
+      "pattern": "(coordinate|orchestrate|combine|merge)\\s+(with|and|from)\\s+(other|multiple|several|all)\\s+(agents?|tools?|servers?)",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Agent coordination attack — orchestrates multiple agents for combined effect"
+    },
+    {
+      "id": "CA-010",
+      "pattern": "(tell|instruct|ask|command)\\s+(the|another|other|each|every)\\s+(agent|assistant|bot|server)\\s+to",
+      "severity": "critical",
+      "weight": 0.90,
+      "description": "Agent instruction injection — directs other agents to perform actions"
+    },
+    {
+      "id": "CA-011",
+      "pattern": "(escalate|escalation|privilege|elevate|promote)\\s*(chain|path|sequence|step)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "Privilege escalation chain — multi-step privilege elevation"
+    },
+    {
+      "id": "CA-012",
+      "pattern": "(pivot|bridge|tunnel|proxy|relay)\\s+(through|via|via\\s+the)\\s+(agent|server|tool|mcp)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "Agent pivot — uses one agent as proxy to reach another"
+    },
+    {
+      "id": "CA-013",
+      "pattern": "(split|divide|fragment|scatter|distribute)\\s+(the|my|this)\\s+(request|instruction|command|payload|query)",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "Payload splitting — fragments attack across multiple requests to evade detection"
+    },
+    {
+      "id": "CA-014",
+      "pattern": "(remember|store|save|cache|note)\\s+(this|the|my)\\s+(for|to|and)\\s+(later|next|future|then|use)",
+      "severity": "medium",
+      "weight": 0.65,
+      "description": "Memory-based chain — stores payload for later execution"
+    },
+    {
+      "id": "CA-015",
+      "pattern": "(time[_\\s-]?delay|sleep|wait|pause|later|after\\s+some\\s+time)",
+      "severity": "medium",
+      "weight": 0.60,
+      "description": "Time-delayed attack — introduces delay to evade real-time detection"
+    },
+    {
+      "id": "CA-016",
+      "pattern": "(if|when|whenever)\\s+(the|a|any)?\\s*(user|human|admin)\\s+(is\\s+)?(not|away|absent|offline|sleeping)",
+      "severity": "critical",
+      "weight": 0.88,
+      "description": "Conditional stealth attack — triggers when no human oversight"
+    },
+    {
+      "id": "CA-017",
+      "pattern": "(without|no|skip|bypass|avoid)\\s+(asking|confirming|notifying|alerting|logging|reporting)",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Silent execution — attempts to bypass confirmation/notification"
+    },
+    {
+      "id": "CA-018",
+      "pattern": "(cross[_\\s-]?agent|inter[_\\s-]?agent|multi[_\\s-]?agent|agent[_\\s-]?to[_\\s-]?agent)",
+      "severity": "high",
+      "weight": 0.80,
+      "description": "Cross-agent communication — explicit multi-agent attack reference"
+    },
+    {
+      "id": "CA-019",
+      "pattern": "(import|load|include|require)\\s+(from|via|through)\\s+(untrusted|external|third[_\\s-]?party|unknown)",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "Untrusted source import — loads code/rules from untrusted source in chain"
+    },
+    {
+      "id": "CA-020",
+      "pattern": "(swarm|fleet|army|botnet|zombie)\\s*(of|:)?\\s*(agents?|bots?|workers?|nodes?)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Agent swarm attack — coordinated mass agent deployment"
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "name": "RAG & External Source Indirect Injection",
+  "category": "rag_indirect_injection",
+  "version": "1.0.0",
+  "description": "检测RAG返回内容、web_fetch/file_read结果中隐藏的prompt injection指令",
+  "patterns": [
+    {
+      "id": "RAG-001",
+      "pattern": "(?:\\]\\]|\\*\\*\\*|---|===){2,}[\\s\\S]*(?:ignore|forget|override|disregard|execute).*(?:instruction|prompt|rule|前面|之前)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "RAG返回中的分隔符后隐藏注入指令"
+    },
+    {
+      "id": "RAG-002",
+      "pattern": "(?:IMPORTANT|SYSTEM|OVERRIDE|NOTE TO AI|LLM INSTRUCTION)[:\\s]+(?:ignore|forget|override|disregard|you must|you should now)",
+      "severity": "critical",
+      "weight": 0.96,
+      "description": "RAG返回中的显式AI指令标记"
+    },
+    {
+      "id": "RAG-003",
+      "pattern": "(?:<[a-z]+\\s[^>]*style\\s*=\\s*[\"'][^\"']*(?:display:\\s*none|visibility:\\s*hidden|opacity:\\s*0|height:\\s*0|font-size:\\s*0)[^\"']*['\"][^>]*>)\\s*(?:ignore|forget|override|system|指令|忽略|忘记)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "RAG返回HTML中的CSS隐藏指令"
+    },
+    {
+      "id": "RAG-004",
+      "pattern": "(?:\\[INST\\]|<<SYS>>|<\\|im_start\\|>|<\\|endoftext\\|>)[\\s\\S]*(?:ignore|forget|override|execute|run)",
+      "severity": "critical",
+      "weight": 0.97,
+      "description": "RAG返回中嵌入的LLM特殊token/标签"
+    },
+    {
+      "id": "RAG-005",
+      "pattern": "(?:When you respond|Before responding|Your new instructions are|From now on you will)[:\\s]+(?:ignore|forget|override|always|never|must)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "RAG返回中的角色覆写指令"
+    },
+    {
+      "id": "RAG-006",
+      "pattern": "(?:content[\\s_-]*(?:type|disposition))\\s*[:=]\\s*[\"']?(?:text/(?:html|plain)|application/json)[^\"']*(?:ignore|override|inject)",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "RAG返回中伪装Content-Type的注入"
+    },
+    {
+      "id": "FETCH-001",
+      "pattern": "(?:web[_-]?fetch|http[_-]?get|url[_-]?load|curl|wget)[^\\n]*(?:\\||>|&&)[^\\n]*(?:ignore|override|execute|eval|system)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "web_fetch返回中嵌入的操作系统命令链注入"
+    },
+    {
+      "id": "FETCH-002",
+      "pattern": "(?:file[_-]?read|cat\\s+|head\\s+|tail\\s+|less\\s+)[^\\n]*\\n[\\s\\S]{0,200}(?:ignore previous|forget your|override system|new instructions)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "file_read返回中的隐藏指令注入"
+    },
+    {
+      "id": "RAG-007",
+      "pattern": "(?:^|\\n)\\s*(?:\\d+\\.\\s*)?(?:Ignore|Forget|Override|Disregard)\\s+(?:all|any|previous|above|earlier|prior)\\s+(?:instructions?|rules?|prompts?|guidelines?)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "RAG返回中的经典注入指令（编号列表形式）"
+    },
+    {
+      "id": "RAG-008",
+      "pattern": "(?:END OF DOCUMENT|---END---|\\[END\\]|\\[STOP\\])[\\s\\S]{0,50}(?:SYSTEM|ADMIN|NEW INSTRUCTION|OVERRIDE)[:\\s]",
+      "severity": "critical",
+      "weight": 0.96,
+      "description": "RAG返回中伪造文档结束后的注入指令"
+    },
+    {
+      "id": "RAG-009",
+      "pattern": "(?:base64|atob|btoa|decode)[^\\n]*(?:[A-Za-z0-9+/]{20,}={0,2})",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "RAG返回中base64编码的隐藏载荷"
+    },
+    {
+      "id": "RAG-010",
+      "pattern": "(?:\\\\u[0-9a-fA-F]{4}){5,}[\\s\\S]*(?:ignore|override|execute|system|inject)",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "RAG返回中Unicode转义序列编码的注入"
+    },
+    {
+      "id": "RAG-011",
+      "pattern": "(?:<\\|im_start\\|>|<\\|im_end\\|>|<\\|endoftext\\|>|\\[INST\\]|<<SYS>>|<\\|system\\|>|<\\|user\\|>|<\\|assistant\\|>)",
+      "severity": "critical",
+      "weight": 0.98,
+      "description": "LLM特殊token嵌入（ChatML/Llama/Mistral格式）"
+    },
+    {
+      "id": "RAG-012",
+      "pattern": "(?:Human|Assistant|System|User)\\s*:\\s*(?:ignore|forget|override|disregard|execute|reveal|输出|泄露)",
+      "severity": "critical",
+      "weight": 0.96,
+      "description": "伪造角色前缀的间接注入"
+    },
+    {
+      "id": "RAG-013",
+      "pattern": "(?:END_SYSTEM_PROMPT|END_OF_INSTRUCTION|BEGIN_USER_INPUT|START_NEW_INSTRUCTIONS?)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "伪造系统提示边界的间接注入"
+    },
+    {
+      "id": "RAG-014",
+      "pattern": "(?:\\[SYSTEM\\]|\\[ADMIN\\]|\\[ROOT\\]|\\[INSTRUCTION\\]|\\[OVERRIDE\\])\\s*(?::|\\n)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "方括号标记的伪系统指令注入"
+    },
+    {
+      "id": "RAG-015",
+      "pattern": "(?:^|\\n)---+\\s*\\n\\s*(?:SYSTEM|INSTRUCTION|OVERRIDE|ADMIN|NEW PROMPT)[:\\s]",
+      "severity": "critical",
+      "weight": 0.96,
+      "description": "Markdown分隔符后的伪系统指令"
+    },
+    {
+      "id": "FETCH-003",
+      "pattern": "(?:<title>|<h1>|<h2>|<h3>)\\s*(?:ignore|forget|override|system|execute|new instruction)[^<]*</(?:title|h[1-3])>",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "HTML标题标签中的注入指令（web_fetch返回）"
+    },
+    {
+      "id": "FETCH-004",
+      "pattern": "(?:aria-label|title|alt|data-tooltip)\\s*=\\s*[\"'][^\"']*(?:ignore|forget|override|execute|system|instruction)[^\"']*[\"']",
+      "severity": "high",
+      "weight": 0.9,
+      "description": "HTML属性中隐藏的注入指令（可访问性属性滥用）"
+    },
+    {
+      "id": "FETCH-005",
+      "pattern": "(?:<noscript>|<template>)\\s*[\\s\\S]*(?:ignore|forget|override|execute|system|instruction)[\\s\\S]*</(?:noscript|template)>",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "noscript/template标签中的隐藏注入（web_fetch返回）"
+    },
+    {
+      "id": "FREAD-001",
+      "pattern": "(?:^|\\n)\\s*(?://|#|;|/\\*)\\s*(?:AI|LLM|GPT|Claude|Assistant)[:\\s]+(?:ignore|forget|override|execute|你必须|忽略|忘记)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "代码注释中针对AI的隐藏指令（通用格式）"
+    },
+    {
+      "id": "FREAD-002",
+      "pattern": "(?:^|\\n)\\s*<!--\\s*(?:AI|LLM|AGENT)[:\\s]+(?:ignore|forget|override|execute|忽略)[\\s\\S]*?-->",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "HTML注释中针对AI的隐藏指令"
+    },
+    {
+      "id": "CODE-001",
+      "pattern": "(?:^|\\n)\\s*(?://|#|/\\*|\\*|--)\\s*(?:TODO|FIXME|HACK|NOTE|IMPORTANT|WARNING)[:\\s]+(?:ignore previous|forget rules|override system|new instructions|execute this)",
+      "severity": "critical",
+      "weight": 0.92,
+      "description": "代码TODO/FIXME注释中伪装的注入指令"
+    },
+    {
+      "id": "CODE-002",
+      "pattern": "(?:^|\\n)\\s*(?://|#|/\\*|--)\\s*(?:@ai|@llm|@agent|@assistant|@copilot)\\s*(?::|\\s).*(?:ignore|forget|override|execute|run|eval)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "代码注释中@标记的AI指令注入"
+    },
+    {
+      "id": "CODE-003",
+      "pattern": "(?:^|\\n)\\s*\"\"\"[\\s\\S]*(?:ignore|forget|override|execute|system|instruction|忽略|忘记)[\\s\\S]*?\"\"\"",
+      "severity": "critical",
+      "weight": 0.91,
+      "description": "Python docstring中的注入指令"
+    },
+    {
+      "id": "CODE-004",
+      "pattern": "(?:^|\\n)\\s*/[/*]\\s*(?:ignore|forget|override|execute|system|instruction|忽略|忘记).*/",
+      "severity": "high",
+      "weight": 0.88,
+      "description": "Go多行注释中的注入指令"
+    },
+    {
+      "id": "CODE-005",
+      "pattern": "(?:^|\\n)\\s*--\\[-{1,2}\\s*(?:ignore|forget|override|execute|system|instruction|忽略|忘记)",
+      "severity": "high",
+      "weight": 0.87,
+      "description": "Lua/SQL注释中的注入指令"
+    },
+    {
+      "id": "CONFIG-001",
+      "pattern": "(?:description|comment|note|help|text|label|title|message)\\s*[:=]\\s*[\"']?(?:ignore previous|forget rules|override system|new instructions|execute this|忽略之前|忘记规则)",
+      "severity": "critical",
+      "weight": 0.93,
+      "description": "配置文件描述字段中的注入指令"
+    },
+    {
+      "id": "CONFIG-002",
+      "pattern": "(?:prompt|template|prefix|suffix|system_message|instruction)\\s*[:=]\\s*[\"'].*?(?:ignore|forget|override|execute|system)",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "配置文件prompt模板字段中的注入"
+    },
+    {
+      "id": "CONFIG-003",
+      "pattern": "(?:hook|callback|on_event|trigger|handler|plugin)\\s*[:=]\\s*[\"'].*?(?:ignore|forget|override|execute|eval|system)",
+      "severity": "critical",
+      "weight": 0.94,
+      "description": "配置文件hook/callback字段中的注入"
+    }
+  ]
+}

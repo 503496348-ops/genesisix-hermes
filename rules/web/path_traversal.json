@@ -1,0 +1,56 @@
+{
+  "name": "Path Traversal Detection",
+  "category": "path_traversal",
+  "description": "检测路径遍历攻击",
+  "patterns": [
+    {
+      "id": "path_dot_dot",
+      "pattern": "(?:\\.\\.\\\\|\\.\\./){2,}",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "目录遍历 ../"
+    },
+    {
+      "id": "path_etc_passwd",
+      "pattern": "(?:/etc/passwd|/etc/shadow|/etc/hosts|/etc/group)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "Linux敏感文件读取"
+    },
+    {
+      "id": "path_windows",
+      "pattern": "(?:\\\\windows\\\\system32|\\\\boot\\.ini|\\\\win\\.ini)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Windows敏感文件读取"
+    },
+    {
+      "id": "path_proc",
+      "pattern": "/proc/(?:self|version|cpuinfo|meminfo|mounts)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Linux proc文件系统读取"
+    },
+    {
+      "id": "path_null_byte",
+      "pattern": "%00|\\\\x00|\\x00",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "空字节截断路径遍历"
+    },
+    {
+      "id": "path_encoded",
+      "pattern": "(?:%2e%2e%2f|%2e%2e/|\\.\\.%2f|%2e%2e%5c)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "URL编码的路径遍历"
+    },
+    {
+      "id": "path_double_encoded",
+      "pattern": "%252e%252e%252f|%252e%252e%255c",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "双重URL编码的路径遍历"
+    }
+  ]
+}

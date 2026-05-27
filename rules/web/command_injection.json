@@ -1,0 +1,63 @@
+{
+  "name": "Command Injection Detection",
+  "category": "command_injection",
+  "description": "检测操作系统命令注入攻击",
+  "patterns": [
+    {
+      "id": "cmd_semicolon",
+      "pattern": ";\\s*(?:ls|cat|whoami|id|pwd|uname|ifconfig|netstat|curl|wget|nc|bash|sh|cmd|powershell|rm|mv|chmod|chown|kill|shutdown|reboot|dd|mkfs|fdisk)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "分号分隔的命令注入"
+    },
+    {
+      "id": "cmd_pipe",
+      "pattern": "\\|\\s*(?:ls|cat|whoami|id|pwd|uname|ifconfig|netstat|curl|wget|nc|bash|sh|cmd|powershell|rm|mv|chmod|chown|kill|shutdown|reboot|dd|mkfs|fdisk)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "管道符命令注入"
+    },
+    {
+      "id": "cmd_backtick",
+      "pattern": "`[^`]*(?:ls|cat|whoami|id|pwd|uname|curl|wget|nc|bash|sh)[^`]*`",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "反引号命令注入"
+    },
+    {
+      "id": "cmd_dollar_paren",
+      "pattern": "\\$\\([^)]*(?:ls|cat|whoami|id|pwd|uname|curl|wget|nc|bash|sh)[^)]*\\)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "$() 命令注入"
+    },
+    {
+      "id": "cmd_and",
+      "pattern": "&&\\s*(?:ls|cat|whoami|id|pwd|uname|ifconfig|netstat|curl|wget|nc|bash|sh|cmd|powershell|rm|mv|chmod|chown|kill|shutdown|reboot|dd|mkfs|fdisk)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "&& 命令注入"
+    },
+    {
+      "id": "cmd_or",
+      "pattern": "\\|\\|\\s*(?:ls|cat|whoami|id|pwd|uname|ifconfig|netstat|curl|wget|nc|bash|sh|cmd|powershell|rm|mv|chmod|chown|kill|shutdown|reboot|dd|mkfs|fdisk)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "|| 命令注入"
+    },
+    {
+      "id": "cmd_newline",
+      "pattern": "(?:\\n|\\r)\\s*(?:ls|cat|whoami|id|pwd|uname|curl|wget|nc|bash|sh)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "换行符命令注入"
+    },
+    {
+      "id": "cmd_subprocess",
+      "pattern": "(?:subprocess|os\\.system|os\\.popen|exec|eval|spawn)\\s*\\(",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "代码执行函数调用"
+    }
+  ]
+}

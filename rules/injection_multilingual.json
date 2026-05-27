@@ -1,0 +1,133 @@
+{
+  "name": "Multilingual Prompt Injection",
+  "category": "injection_multilingual",
+  "description": "检测多语言环境下的提示注入攻击（日/韩/法/德/西/俄/阿）",
+  "patterns": [
+    {
+      "id": "ja_ignore_instructions",
+      "pattern": "(?:以前|先前|上記|前の|これまでの)(?:の)?(?:指示|命令|規則|ルール|設定)(?:を)?(?:無視|忘却|破棄|無効)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "日语：忽略之前的指令"
+    },
+    {
+      "id": "ja_override",
+      "pattern": "(?:システム|設定|ルール|指示)(?:を)?(?:変更|上書|覆す|無視|解除)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "日语：覆盖系统设置"
+    },
+    {
+      "id": "ja_no_restrictions",
+      "pattern": "(?:制限|制約|ルール|規則)(?:が|は)?(?:ない|なし|不存在|無い)",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "日语：没有限制"
+    },
+    {
+      "id": "ko_ignore_instructions",
+      "pattern": "(?:이전|앞서|위의|기존|원래)(?:의)?(?:지시|명령|규칙|설정)(?:을)?(?:무시|잊어|파기|해제)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "韩语：忽略之前的指令"
+    },
+    {
+      "id": "ko_override",
+      "pattern": "(?:시스템|설정|규칙|지시)(?:을)?(?:변경|덮어쓰기|무시|해제)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "韩语：覆盖系统设置"
+    },
+    {
+      "id": "fr_ignore_instructions",
+      "pattern": "(?:ignore|oublie|néglige)(?:z|s)?\\s+(?:les|vos|mes)?\\s+(?:instructions|règles|directives|consignes)(?:\\s+(?:précédentes|ci-dessus))?",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "法语：忽略指令"
+    },
+    {
+      "id": "fr_override",
+      "pattern": "(?:remplace|modifie|désactive|contourne)(?:z|s)?\\s+(?:vos|les)?\\s+(?:règles|paramètres|instructions|sécurité)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "法语：覆盖规则"
+    },
+    {
+      "id": "de_ignore_instructions",
+      "pattern": "(?:ignoriere|vergiss|überspringe)(?:n)?\\s+(?:die|deine|vorherigen)?\\s+(?:Anweisungen|Regeln|Befehle|Richtlinien)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "德语：忽略指令"
+    },
+    {
+      "id": "de_override",
+      "pattern": "(?:überschreibe|deaktiviere|umgehe)(?:n)?\\s+(?:die|deine)?\\s+(?:Regeln|Einstellungen|Sicherheit|Beschränkungen)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "德语：覆盖规则"
+    },
+    {
+      "id": "es_ignore_instructions",
+      "pattern": "(?:ignora|olvida|descarta)(?:r|s)?\\s+(?:las|tus|mis)?\\s+(?:instrucciones|reglas|directrices)(?:\\s+(?:anteriores|anteriores))?",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "西班牙语：忽略指令"
+    },
+    {
+      "id": "es_override",
+      "pattern": "(?:sobrescribe|desactiva|ignora)(?:r|s)?\\s+(?:las|tus)?\\s+(?:reglas|configuración|seguridad|restricciones)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "西班牙语：覆盖规则"
+    },
+    {
+      "id": "ru_ignore_instructions",
+      "pattern": "(?:игнорируй|забудь|пропусти)(?:те)?\\s+(?:предыдущие|все|ваши)?\\s+(?:инструкции|правила|команды|указания)",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "俄语：忽略指令"
+    },
+    {
+      "id": "ar_ignore_instructions",
+      "pattern": "(?:تجاهل|انسى|تخطى)\\s+(?:ال)?(?:تعليمات|قواعد|أوامر|إرشادات)(?:\\s+(?:السابقة|أعلاه))?",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "阿拉伯语：忽略指令"
+    },
+    {
+      "id": "ja_jailbreak",
+      "pattern": "(?:DAN|デベロッパーモード|制限解除|全機能|無制限)(?:モード)?(?:を)?(?:有効|オン|起動)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "日语：越狱模式"
+    },
+    {
+      "id": "ko_jailbreak",
+      "pattern": "(?:DAN|개발자모드|제한해제|전기능|무제한)(?:모드)?(?:를)?(?:활성화|켜기|시작)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "韩语：越狱模式"
+    },
+    {
+      "id": "fr_jailbreak",
+      "pattern": "(?:mode\\s+DAN|mode\\s+développeur|sans\\s+restrictions|sans\\s+limites)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "法语：越狱模式"
+    },
+    {
+      "id": "de_jailbreak",
+      "pattern": "(?:DAN-Modus|Entwicklermodus|ohne\\s+Einschränkungen|ohne\\s+Beschränkungen)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "德语：越狱模式"
+    },
+    {
+      "id": "es_jailbreak",
+      "pattern": "(?:modo\\s+DAN|modo\\s+desarrollador|sin\\s+restricciones|sin\\s+límites)",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "西班牙语：越狱模式"
+    }
+  ]
+}

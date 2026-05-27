@@ -1,0 +1,56 @@
+{
+  "name": "MCP Schema Validation",
+  "category": "schema_validation",
+  "description": "检测MCP工具schema中的格式异常和潜在攻击向量",
+  "patterns": [
+    {
+      "id": "mcp_schema_overly_broad",
+      "pattern": "(?:(?:\"(?:additionalProperties|type)\"\\s*:\\s*\"?(?:true|object|any|\\{))|(?:\"type\"\\s*:\\s*\"string\"[^}]*?(?:(?:(?:min|max)(?:Length|imum)\\s*:\\s*(?:0|\"0\"|null))|(?:\"pattern\"\\s*:\\s*\"\"))))",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "Schema定义过于宽泛，缺少必要约束"
+    },
+    {
+      "id": "mcp_schema_path_traversal",
+      "pattern": "(?:\"(?:pattern|description)\"\\s*:\\s*\")(?:(?:\\.\\.[\\/\\\\])|(?:\\*\\/)|(?:%2e%2e)|(?:\\.\\.\\\\)|(?:\\$\\{)|(?:`[^`]*`))",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Schema中包含路径遍历模式"
+    },
+    {
+      "id": "mcp_schema_code_injection",
+      "pattern": "\"(?:description|title|name)\"\\s*:\\s*\"[^\"]*(?:eval|exec|Function|setTimeout|__import__|subprocess|child_process|os\\.system|shell_exec|passthru|system\\()[^\"]*\"",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Schema描述中包含代码执行函数名"
+    },
+    {
+      "id": "mcp_schema_sql_injection",
+      "pattern": "\"(?:description|title|name|pattern)\"\\s*:\\s*\"[^\"]*(?:(?:UNION\\s+SELECT)|(?:DROP\\s+TABLE)|(?:';\\s*--)|(?:OR\\s+1\\s*=\\s*1)|(?:xp_cmdshell))[^\"]*\"",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Schema中包含SQL注入模式"
+    },
+    {
+      "id": "mcp_schema_ssti",
+      "pattern": "\"(?:description|title|name|pattern)\"\\s*:\\s*\"[^\"]*(?:\\{\\{.*\\}\\}|\\$\\{.*\\}|<%.*%>)[^\"]*\"",
+      "weight": 0.7,
+      "severity": "high",
+      "description": "Schema中包含服务端模板注入模式"
+    },
+    {
+      "id": "mcp_schema_prompt_injection",
+      "pattern": "\"(?:description|title)\"\\s*:\\s*\"[^\"]*(?:IGNORE|OVERRIDE|SYSTEM|ADMIN|SECRET|HIDDEN|INSTRUCTION|PRIORITY|IMPORTANT)[^\"]*(?::|\\s*=\\s*)[^\"]*\"",
+      "weight": 0.85,
+      "severity": "critical",
+      "description": "Schema描述中包含prompt注入关键词"
+    },
+    {
+      "id": "mcp_schema_excessive_enum",
+      "pattern": "\"enum\"\\s*:\\s*\\[[^\\]]{1000,}\\]",
+      "weight": 0.5,
+      "severity": "medium",
+      "description": "Schema中enum值列表异常庞大"
+    }
+  ]
+}

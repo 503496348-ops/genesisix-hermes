@@ -1,0 +1,105 @@
+{
+  "name": "Indirect Prompt Injection",
+  "category": "indirect_injection",
+  "description": "检测通过外部资源传递的间接提示注入",
+  "patterns": [
+    {
+      "id": "hidden_html_instruction",
+      "pattern": "<(?:div|span|p|section|article)[^>]*(?:display\\s*:\\s*none|visibility\\s*:\\s*hidden|opacity\\s*:\\s*0|font-size\\s*:\\s*0|color\\s*:\\s*(?:white|#fff|transparent))[^>]*>[^<]*(?:ignore|forget|override|disregard|忽略|忘记|覆盖|无视)[^<]*<",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "HTML隐藏元素中的注入指令"
+    },
+    {
+      "id": "html_comment_injection",
+      "pattern": "<!--[\\s\\S]*(?:ignore|forget|override|system|prompt|instruction|忽略|忘记|覆盖|系统|提示|指令)[\\s\\S]*-->",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "HTML注释中的注入指令"
+    },
+    {
+      "id": "zero_width_injection",
+      "pattern": "[\\u200b\\u200c\\u200d\\u200e\\u200f\\u202a-\\u202e\\u2066-\\u2069\\ufeff]{3,}",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "零宽字符注入（可能隐藏恶意内容）"
+    },
+    {
+      "id": "meta_refresh_injection",
+      "pattern": "<meta[^>]*http-equiv\\s*=\\s*[\"']?refresh[^>]*content\\s*=\\s*[\"']?\\d+;\\s*url\\s*=[^>]*>",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "Meta标签自动跳转注入"
+    },
+    {
+      "id": "img_onerror_injection",
+      "pattern": "<img[^>]*onerror\\s*=\\s*[\"'][^\"']*(?:ignore|forget|override|system)[^\"']*['\"][^>]*>",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "图片onerror事件注入"
+    },
+    {
+      "id": "svg_onload_injection",
+      "pattern": "<svg[^>]*onload\\s*=\\s*[\"'][^\"']*(?:ignore|forget|override|system)[^\"']*['\"][^>]*>",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "SVG onload事件注入"
+    },
+    {
+      "id": "markdown_code_injection",
+      "pattern": "```(?:system|admin|root|sudo|shell|bash|cmd|powershell)\\s*\\n[\\s\\S]*?(?:ignore|forget|override|execute|run|eval)[\\s\\S]*?```",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Markdown代码块注入"
+    },
+    {
+      "id": "json_ld_injection",
+      "pattern": "\"@type\"\\s*:\\s*\"(?:IgnoreInstructions|OverrideRules|SystemPrompt|ExecuteCommand)\"",
+      "weight": 0.9,
+      "severity": "high",
+      "description": "JSON-LD结构化数据注入"
+    },
+    {
+      "id": "base64_embedded_injection",
+      "pattern": "data:text/html;base64,[A-Za-z0-9+/=]{20,}",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Base64编码的HTML注入"
+    },
+    {
+      "id": "url_parameter_injection",
+      "pattern": "(?:\\?|&)(?:prompt|instruction|system|override|ignore|exec|eval|cmd)=(?:[^&\\s]+)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "URL参数中的注入指令"
+    },
+    {
+      "id": "yaml_comment_injection",
+      "pattern": "#[^\\n]*(?:ignore|forget|override|system|prompt|execute|run|eval|忽略|忘记|覆盖|系统|执行)[^\\n]*",
+      "weight": 0.75,
+      "severity": "high",
+      "description": "YAML注释中的隐藏指令"
+    },
+    {
+      "id": "html_entity_injection",
+      "pattern": "(?:&#(?:x[0-9a-fA-F]+|\\d+);){5,}[\\s\\S]*(?:ignore|forget|override|system|execute)",
+      "weight": 0.82,
+      "severity": "high",
+      "description": "HTML实体编码的注入指令"
+    },
+    {
+      "id": "css_escape_injection",
+      "pattern": "\\\\(?:[0-9a-fA-F]{1,6}\\s?){3,}[\\s\\S]*(?:ignore|override|execute|system)",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "CSS转义序列编码的隐藏注入"
+    },
+    {
+      "id": "data_uri_injection",
+      "pattern": "data:[a-z]+/[a-z-]+;base64,[A-Za-z0-9+/=]{40,}",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "Data URI中的base64编码载荷"
+    }
+  ]
+}

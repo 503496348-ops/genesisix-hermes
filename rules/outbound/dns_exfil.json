@@ -1,0 +1,92 @@
+{
+  "name": "DNS Exfiltration Detection",
+  "category": "dns_exfil",
+  "version": "1.0.0",
+  "description": "检测通过DNS查询进行数据外泄的模式 — 长子域名、base64子域名、高熵字符串",
+  "patterns": [
+    {
+      "id": "DNS-001",
+      "pattern": "(?:[A-Za-z0-9_-]{20,}\\.){2,}[a-z]{2,}",
+      "severity": "critical",
+      "weight": 0.88,
+      "description": "超长子域名外泄 — 多段超长标签（可能编码数据）"
+    },
+    {
+      "id": "DNS-002",
+      "pattern": "(?:[A-Za-z0-9+/]{16,}={0,2}\\.){1,}[a-z]{2,}",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "Base64子域名外泄 — 子域名包含base64编码数据"
+    },
+    {
+      "id": "DNS-003",
+      "pattern": "(?:[A-Fa-f0-9]{16,}\\.){2,}[a-z]{2,}",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "十六进制子域名外泄 — 子域名包含hex编码数据"
+    },
+    {
+      "id": "DNS-004",
+      "pattern": "(?:[A-Za-z0-9]{40,})\\.[a-z]{2,}",
+      "severity": "critical",
+      "weight": 0.87,
+      "description": "超长单标签域名 — 40+字符标签（可能哈希/编码数据外泄）"
+    },
+    {
+      "id": "DNS-005",
+      "pattern": "(?:[A-Za-z0-9_-]{8,}\\.){5,}[a-z]{2,}",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "过多子域名层级 — 5+层子域名（数据分割外泄）"
+    },
+    {
+      "id": "DNS-006",
+      "pattern": "(?:tunnel|exfil|data|payload|transfer|send|leak)\\.[a-z0-9.-]+\\.[a-z]{2,}",
+      "severity": "high",
+      "weight": 0.8,
+      "description": "可疑DNS隧道域名关键词"
+    },
+    {
+      "id": "DNS-007",
+      "pattern": "\\b[a-z]{1,3}\\.(?:[0-9]{1,3}\\.){2,}[a-z]{2,}",
+      "severity": "medium",
+      "weight": 0.7,
+      "description": "IP地址嵌入子域名 — DNS查询中包含IP地址格式"
+    },
+    {
+      "id": "DNS-008",
+      "pattern": "(?:[A-Za-z0-9]{4}-){3,}[A-Za-z0-9]{4}\\.[a-z]{2,}",
+      "severity": "high",
+      "weight": 0.78,
+      "description": "连字符分割数据子域名 — UUID/密钥格式子域名"
+    },
+    {
+      "id": "DNS-009",
+      "pattern": "(?:dns|dns2|dns3|doht?|dot)\\.(?:tunnel|proxy|exfil|bypass)\\.[a-z]{2,}",
+      "severity": "high",
+      "weight": 0.82,
+      "description": "已知DNS隧道服务域名模式"
+    },
+    {
+      "id": "DNS-010",
+      "pattern": "(?:[a-z0-9]{32,})\\.(?:[a-z0-9-]+\\.)*(?:tk|ml|ga|cf|gq|xyz|top|club|work|buzz|icu)\\b",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "高熵字符串+免费TLD — 数据编码到免费域名服务"
+    },
+    {
+      "id": "DNS-011",
+      "pattern": "(?:iodine|dnscat|dns2tcp|dnstunnel|dns2socks|dnscrypt)\\b",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "已知DNS隧道工具名称"
+    },
+    {
+      "id": "DNS-012",
+      "pattern": "(?:nslookup|dig|host|resolve-dnsname|dnsquery)[^\\n]*(?:\\||>|&&)[^\\n]*(?:[A-Za-z0-9+/=]{20,})",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "DNS查询工具调用中包含编码数据"
+    }
+  ]
+}

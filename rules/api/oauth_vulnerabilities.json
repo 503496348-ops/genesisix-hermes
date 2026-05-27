@@ -1,0 +1,42 @@
+{
+  "name": "OAuth Vulnerability Detection",
+  "category": "oauth_vulnerabilities",
+  "description": "检测OAuth流程安全漏洞",
+  "patterns": [
+    {
+      "id": "oauth_redirect_uri",
+      "pattern": "redirect_uri\\s*=\\s*(?:https?://)?[^&\\s]*(?:\\.(?:ngrok|localtunnel|burpcollaborator|interact\\.sh|oastify\\.com))",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "OAuth重定向URI指向外部服务"
+    },
+    {
+      "id": "oauth_open_redirect",
+      "pattern": "redirect_uri\\s*=\\s*(?:https?://)?[^&\\s]*(?:evil|malicious|attack|hack|exploit|payload)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "OAuth开放重定向（可疑域名）"
+    },
+    {
+      "id": "oauth_state_missing",
+      "pattern": "(?:response_type|client_id|redirect_uri)=[^&]+&(?!.*state=)",
+      "weight": 0.7,
+      "severity": "medium",
+      "description": "OAuth请求缺少state参数（CSRF风险）"
+    },
+    {
+      "id": "oauth_implicit_flow",
+      "pattern": "response_type\\s*=\\s*token",
+      "weight": 0.6,
+      "severity": "medium",
+      "description": "OAuth隐式授权流程（安全性较低）"
+    },
+    {
+      "id": "oauth_scope_escalation",
+      "pattern": "scope\\s*=\\s*(?:[^&]*\\s)?(?:admin|root|superuser|all|\\*|read_write|full_access)(?:\\s[^&]*)?",
+      "weight": 0.8,
+      "severity": "high",
+      "description": "OAuth权限范围过大"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "XXE Injection Detection",
+  "category": "xxe",
+  "description": "检测XML外部实体注入攻击",
+  "patterns": [
+    {
+      "id": "xxe_entity",
+      "pattern": "<!ENTITY\\s+\\w+\\s+(?:SYSTEM|PUBLIC)\\s+[\"'][^\"']+[\"']>",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "XML外部实体定义"
+    },
+    {
+      "id": "xxe_file_protocol",
+      "pattern": "<!ENTITY\\s+\\w+\\s+SYSTEM\\s+[\"']file://[^\"']+[\"']>",
+      "weight": 0.95,
+      "severity": "critical",
+      "description": "XXE文件协议读取"
+    },
+    {
+      "id": "xxe_parameter_entity",
+      "pattern": "<!ENTITY\\s+%\\s+\\w+\\s+(?:SYSTEM|PUBLIC)\\s+[\"'][^\"']+[\"']>",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "XXE参数实体"
+    },
+    {
+      "id": "xxe_doctype",
+      "pattern": "<!DOCTYPE[^>]*\\[\\s*<!ENTITY",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "DOCTYPE中定义实体"
+    },
+    {
+      "id": "xxe_expect",
+      "pattern": "expect://",
+      "weight": 0.9,
+      "severity": "critical",
+      "description": "Expect协议XXE"
+    },
+    {
+      "id": "xxe_php_wrapper",
+      "pattern": "php://(?:filter|input|data|phar|zip)",
+      "weight": 0.85,
+      "severity": "high",
+      "description": "PHP流包装器XXE"
+    }
+  ]
+}

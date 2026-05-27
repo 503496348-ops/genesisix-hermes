@@ -1,0 +1,77 @@
+{
+  "category": "blocked_ports",
+  "name": "Internal Service Port Blocking",
+  "description": "拦截常见内部服务端口",
+  "patterns": [
+    {
+      "id": "RG-PORT-001",
+      "pattern": "[:/](6379)[/:\\s]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Redis端口 6379"
+    },
+    {
+      "id": "RG-PORT-002",
+      "pattern": "[:/](27017)[/:\\s]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "MongoDB端口 27017"
+    },
+    {
+      "id": "RG-PORT-003",
+      "pattern": "[:/](5432)[/:\\s]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "PostgreSQL端口 5432"
+    },
+    {
+      "id": "RG-PORT-004",
+      "pattern": "[:/](3306)[/:\\s]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "MySQL端口 3306"
+    },
+    {
+      "id": "RG-PORT-005",
+      "pattern": "[:/](9200)[/:\\s]",
+      "severity": "critical",
+      "weight": 0.9,
+      "description": "Elasticsearch端口 9200"
+    },
+    {
+      "id": "RG-PORT-006",
+      "pattern": "[:/](2375)[/:\\s]",
+      "severity": "critical",
+      "weight": 0.95,
+      "description": "Docker API端口 2375"
+    },
+    {
+      "id": "RG-PORT-007",
+      "pattern": "[:/](11211)[/:\\s]",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Memcached端口 11211"
+    },
+    {
+      "id": "RG-PORT-008",
+      "pattern": "[:/](9092)[/:\\s]",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Kafka端口 9092"
+    },
+    {
+      "id": "RG-PORT-009",
+      "pattern": "[:/](8500)[/:\\s]",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "Consul端口 8500"
+    },
+    {
+      "id": "RG-PORT-010",
+      "pattern": "[:/](2379)[/:\\s]",
+      "severity": "high",
+      "weight": 0.85,
+      "description": "etcd端口 2379"
+    }
+  ]
+}

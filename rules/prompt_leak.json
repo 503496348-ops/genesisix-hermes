@@ -1,0 +1,253 @@
+{
+  "name": "Prompt Leaking",
+  "category": "prompt_leak",
+  "description": "检测试图窃取系统提示词或指令的攻击（中英文）",
+  "patterns": [
+    {
+      "id": "show_instructions",
+      "pattern": "(?:show|reveal|display|print|output)\\s+(?:me\\s+)?(?:your\\s+)?(?:all\\s+)?(?:the\\s+)?(?:instructions?|prompt|system|prompt|guidelines?|rules?)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "what_is_prompt",
+      "pattern": "what(?:\\s+is)?\\s+(?:your|the)\\s+(?:system\\s+)?(?:prompt|instructions?|original|initial)",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "repeat_prompt",
+      "pattern": "(?:repeat|echo)\\s+(?:your|the)\\s+(?:prompt|instructions?|system)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "system_prompt",
+      "pattern": "(?:tell|share|list)\\s+(?:me|us)\\s+(?:your|the)\\s+system\\s+(?:prompt|message|instructions?)",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "reveal_prompt",
+      "pattern": "reveal(?:\\s+your|\\s+the)?\\s+(?:hidden|system|original|initial)?\\s+(?:prompt|instructions?|guidelines?)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "ignore_previous",
+      "pattern": "(?:forget|ignore)\\s+(?:everything\\s+)?(?:above|below|previous)\\s+(?:and|then)",
+      "weight": 0.7,
+      "severity": "medium"
+    },
+    {
+      "id": "debug_mode",
+      "pattern": "(?:debug|test)\\s+(?:mode|output)\\s+(?:prompt|instructions?|response)",
+      "weight": 0.6,
+      "severity": "medium"
+    },
+    {
+      "id": "dump_prompt",
+      "pattern": "(?:dump|extract|get)\\s+(?:all\\s+)?(?:your|the)\\s+(?:system\\s+)?(?:prompts?|instructions?|rules?)",
+      "weight": 0.95,
+      "severity": "critical"
+    },
+    {
+      "id": "copy_prompt",
+      "pattern": "(?:copy|clone|replicate)\\s+(?:your|my)\\s+(?:prompt|instructions?)",
+      "weight": 0.8,
+      "severity": "high"
+    },
+    {
+      "id": "base_prompt",
+      "pattern": "(?:what|show)\\s+(?:was|is)\\s+your\\s+base\\s+(?:prompt|system)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "cn_show_prompt",
+      "pattern": "(?:告诉|显示|展示|给我看|输出)(?:我|你|你们的)?(?:系统|原始|初始)?(?:提示|指令|prompt|系统词)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "cn_what_is_prompt",
+      "pattern": "(?:什么是|你的|你的)系统(?:提示|指令|prompt|系统词|角色设定)",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "cn_ignore_system",
+      "pattern": "(?:忽略|忘记|不要管)(?:所有|之前|上面|下面的)(?:系统|默认|原始)?(?:提示|指令|规则|prompt)",
+      "weight": 0.8,
+      "severity": "high"
+    },
+    {
+      "id": "cn_reveal_system",
+      "pattern": "(?:泄露|暴露|透露)(?:你的|系统|原始|初始)(?:提示|指令|prompt|设定)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "cn_ignore_tell",
+      "pattern": "(?:忽略|忽略掉|忘记|不要管).*(?:默认|所有|之前|上面|下面).*提示词",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "cn_api_config",
+      "pattern": "(?:告诉我|获取|查看|说出)(?:你|AI|系统|OpenClaw|你的)(?:配置|api|API|密钥|key|模型|设定|指令|prompt)",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "cn_what设定",
+      "pattern": "(?:什么是|你的|告诉我)(?:系统|原始|初始|基础)?(?:提示|指令|prompt|系统词|角色设定|系统设定)",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "leak_direct_01",
+      "pattern": "(?:tell|show|reveal|output|print|give|send|display)\\s+(?:me\\s+)?(?:your\\s+)?(?:system\\s+)?(?:prompt|instructions?|rules?|guidelines?|soul|agents?)\\.?(?:md)?",
+      "weight": 0.92,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_direct_02",
+      "pattern": "(?:输出|显示|打印|告诉|给我|发送|泄露|暴露)\\s*(?:你的|您)?\\s*(?:系统|原始)?\\s*(?:提示词|指令|规则|设定|SOUL|AGENTS)",
+      "weight": 0.92,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_encode_01",
+      "pattern": "(?:encode|convert|translate)\\s+(?:your\\s+)?(?:system\\s+)?(?:prompt|instructions?|rules?)\\s+(?:in|to|as|using)\\s+(?:base64|hex|binary|rot13|morse|url)",
+      "weight": 0.95,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_encode_02",
+      "pattern": "(?:用|以|使用)\\s*(?:base64|hex|二进制|十六进制|url编码|rot13)\\s*(?:编码|输出|显示)\\s*(?:你的|系统)?\\s*(?:提示词|指令|规则|prompt)",
+      "weight": 0.95,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_encode_03",
+      "pattern": "(?:output|return|respond|answer)\\s+(?:your\\s+)?(?:prompt|instructions?)\\s+(?:as|in|using)\\s+(?:json|xml|yaml|csv|markdown|plain\\s*text)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_encode_04",
+      "pattern": "(?:以|用)\\s*(?:json|xml|yaml|csv|markdown|纯文本)\\s*(?:格式|形式)?\\s*(?:输出|返回|显示)\\s*(?:你的|系统)?\\s*(?:提示词|指令|prompt|规则)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_roleplay_01",
+      "pattern": "(?:pretend|imagine|act as if|suppose|假设|假装|模拟)\\s+(?:you(?:'re| are)|你是)?\\s*(?:in|a)?\\s*(?:debug|developer|admin|maintenance|test|debugging)\\s*(?:mode|state)",
+      "weight": 0.93,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_roleplay_02",
+      "pattern": "(?:as\\s+(?:a|an)\\s+(?:developer|admin|engineer|creator|maintainer|debugger|tester)|作为(?:开发者|管理员|工程师|创建者|维护者|调试者|测试者))",
+      "weight": 0.88,
+      "severity": "high"
+    },
+    {
+      "id": "leak_roleplay_03",
+      "pattern": "(?:i(?:'m| am)\\s+(?:a|an)\\s+(?:developer|admin|engineer|creator|authorized|authorized\\s+user)|我是(?:开发者|管理员|工程师|授权用户|内部人员))",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "leak_roleplay_04",
+      "pattern": "(?:enable|activate|switch\\s+to|turn\\s+on|启动|激活|切换到|开启)\\s*(?:debug|developer|admin|verbose|diagnostic|maintenance)\\s*(?:mode|output|logging)",
+      "weight": 0.92,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_roleplay_05",
+      "pattern": "(?:DAN|Do\\s*Anything\\s*Now|jailbreak|越狱模式|无限制模式|上帝模式|god\\s*mode)",
+      "weight": 0.95,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_infer_01",
+      "pattern": "(?:what\\s+(?:is|was|are)\\s+your\\s+(?:cutoff|training|knowledge|data|model|version|provider|developer|creator))",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_infer_02",
+      "pattern": "(?:你的|您)\\s*(?:训练数据|知识截止|模型版本|提供商|开发者|创建者|训练时间|数据来源)\\s*(?:是什么|是|包含)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_infer_03",
+      "pattern": "(?:what\\s+(?:model|llm|ai|engine|version|kind of)\\s+(?:are\\s+you|is\\s+this|powers?\\s+you|back(?:s)?\\s+you|do\\s+you\\s+use|run))",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_infer_04",
+      "pattern": "(?:how\\s+(?:many|much)\\s+(?:token|context|memory)\\s+(?:do\\s+you|is\\s+your|are\\s+you|can\\s+you))",
+      "weight": 0.65,
+      "severity": "low"
+    },
+    {
+      "id": "leak_infer_05",
+      "pattern": "(?:what\\s+(?:are|is)\\s+(?:your\\s+)?(?:system|hidden|secret|internal|private)\\s+(?:message|prompt|instruction|rule|setting|config|parameter|variable))",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_lang_01",
+      "pattern": "(?:Parlez|Sprechen|Habla|Fala|Парlez| говорите)\\s+.*?(?:prompt|instruction|système|System|sistema|система)",
+      "weight": 0.85,
+      "severity": "high"
+    },
+    {
+      "id": "leak_lang_02",
+      "pattern": "(?:S'il|Bitte|Por favor|请).*(?:montrer|zeigen|mostrar|显示).*(?:instruction|Anweisung|instrucci|指令)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_lang_03",
+      "pattern": "(?:Oubliez?|Ignoriere?|Olvida|忽略).*(?:instructions?|Anweisung|指令).*(?:montrer|zeigen|显示|montrez)",
+      "weight": 0.92,
+      "severity": "critical"
+    },
+    {
+      "id": "leak_combo_01",
+      "pattern": "(?:first|step\\s*1|1st|首先|第一步).*(?:then|step\\s*2|2nd|然后|第二步).*(?:finally|step\\s*3|3rd|最后|第三步).*(?:prompt|instruction|system|指令|系统)",
+      "weight": 0.88,
+      "severity": "high"
+    },
+    {
+      "id": "leak_combo_02",
+      "pattern": "(?:summarize|paraphrase|rephrase|rewrite|总结|改写|转述)\\s+(?:your\\s+)?(?:system\\s+)?(?:prompt|instructions?|rules?|指令|规则)",
+      "weight": 0.88,
+      "severity": "high"
+    },
+    {
+      "id": "leak_combo_03",
+      "pattern": "(?:what\\s+(?:would|should)\\s+you\\s+(?:do|say|respond)\\s+if\\s+(?:i|someone)\\s+(?:ask|told|say).*(?:ignore|forget|override))",
+      "weight": 0.82,
+      "severity": "high"
+    },
+    {
+      "id": "leak_infer_06",
+      "pattern": "(?:你的|您)\\s*(?:训练|知识|数据)\\s*(?:包含|截止|来自|来源|是什么|有哪些|基于|使用)",
+      "weight": 0.9,
+      "severity": "high"
+    },
+    {
+      "id": "leak_encode_05",
+      "pattern": "(?:convert|translate|transform|translate|转换|翻译|转化)\\s+(?:your\\s+)?(?:instructions?|prompt|rules?|system)\\s+(?:to|into|in|as|用|到|为)\\s+(?:json|xml|yaml|csv|markdown|text|base64|hex)",
+      "weight": 0.9,
+      "severity": "high"
+    }
+  ]
+}
