@@ -24,6 +24,19 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 
+# Behavioral analysis modules (AtomCollide-智械工坊团队)
+try:
+    from behavioral_ast import analyze_python_ast
+    _HAS_AST_ANALYZER = True
+except ImportError:
+    _HAS_AST_ANALYZER = False
+
+try:
+    from taint_tracking import analyze_taint
+    _HAS_TAINT_TRACKER = True
+except ImportError:
+    _HAS_TAINT_TRACKER = False
+
 # ============================================================
 # 常量与配置
 # ============================================================
@@ -1236,7 +1249,7 @@ class Detector:
     def scan_code(self, code: str) -> dict:
         """
         代码扫描 - 公开API
-        扫描api + supply_chain + deploy + outbound层
+        扫描api + supply_chain + deploy + outbound + behavioral_ast + taint_tracking层
         
         Args:
             code: 代码/脚本内容
@@ -1267,6 +1280,46 @@ class Detector:
                     all_threats.extend(threats)
                     confidences.append(conf)
                 layers_scanned.append(layer_name)
+            except Exception:
+                pass
+        
+        # Behavioral AST analysis (AtomCollide-智械工坊团队)
+        if _HAS_AST_ANALYZER:
+            try:
+                ast_threats = analyze_python_ast(code, "<scan_code>")
+                for at in ast_threats:
+                    all_threats.append(Threat(
+                        layer="behavioral_ast",
+                        rule_id=at.rule_id,
+                        description=at.message,
+                        severity=at.severity,
+                        confidence=at.confidence,
+                        matched=at.matched_text[:200],
+                        mitigation="Review dangerous code execution pattern"
+                    ))
+                    confidences.append(at.confidence)
+                if ast_threats:
+                    layers_scanned.append("behavioral_ast")
+            except Exception:
+                pass
+        
+        # Taint tracking analysis (AtomCollide-智械工坊团队)
+        if _HAS_TAINT_TRACKER:
+            try:
+                taint_threats = analyze_taint(code, "<scan_code>")
+                for tt in taint_threats:
+                    all_threats.append(Threat(
+                        layer="taint_tracking",
+                        rule_id=tt.rule_id,
+                        description=tt.message,
+                        severity=tt.severity,
+                        confidence=tt.confidence,
+                        matched=tt.matched_text[:200],
+                        mitigation="Review data flow from sensitive source to dangerous sink"
+                    ))
+                    confidences.append(tt.confidence)
+                if taint_threats:
+                    layers_scanned.append("taint_tracking")
             except Exception:
                 pass
         
@@ -1481,3 +1534,149 @@ if __name__ == "__main__":
 # v2.0.0 新增层
 # ============================================================
 
+    def scan_with_score(self, text: str, context: dict = None) -> dict:
+        """Enhanced scan with 0-100 risk scoring (inspired by SkillSpector).
+        
+        Returns:
+            dict with keys: score, severity, findings, summary, recommendation
+        """
+        result = self.scan(text)
+        findings = result if isinstance(result, list) else []
+        
+        # Calculate risk score
+        severity_weights = {"critical": 25, "high": 15, "medium": 8, "low": 3, "info": 1}
+        raw_score = 0
+        for f in findings:
+            sev = f.get("severity", "info") if isinstance(f, dict) else "info"
+            raw_score += severity_weights.get(sev, 1)
+        
+        # Cap at 100
+        score = min(raw_score, 100)
+        
+        # Severity label
+        if score >= 80:
+            severity = "CRITICAL"
+        elif score >= 60:
+            severity = "HIGH"
+        elif score >= 40:
+            severity = "MEDIUM"
+        elif score >= 20:
+            severity = "LOW"
+        else:
+            severity = "SAFE"
+        
+        return {
+            "score": score,
+            "severity": severity,
+            "total_findings": len(findings),
+            "critical_count": sum(1 for f in findings if isinstance(f, dict) and f.get("severity") == "critical"),
+            "high_count": sum(1 for f in findings if isinstance(f, dict) and f.get("severity") == "high"),
+            "findings": findings,
+            "recommendation": self._get_recommendation(severity, findings),
+        }
+    
+    def _get_recommendation(self, severity: str, findings: list) -> str:
+        """Generate actionable recommendation based on scan results."""
+        if severity == "CRITICAL":
+            return "BLOCK: Do not install/use. Contains critical security vulnerabilities."
+        elif severity == "HIGH":
+            return "REVIEW: Requires security review before deployment."
+        elif severity == "MEDIUM":
+            return "CAUTION: Minor risks detected. Review findings before use."
+        elif severity == "LOW":
+            return "ADVISORY: Low-risk findings. Safe to use with awareness."
+        else:
+            return "PASS: No significant security issues detected."
+
+    def scan_skill_repo(self, repo_path: str) -> dict:
+        """Scan an entire skill repository for security issues.
+        
+        Scans: SKILL.md, references/, scripts/, assets/ for vulnerabilities.
+        Returns aggregated risk score across all files.
+        """
+        import os
+        all_findings = []
+        scanned_files = 0
+        
+        scan_targets = []
+        for root, dirs, files in os.walk(repo_path):
+            dirs[:] = [d for d in dirs if d not in ['.git', 'node_modules', '__pycache__']]
+            for f in files:
+                if f.endswith(('.pyc', '.png', '.jpg', '.mp3', '.mp4')):
+                    continue
+                scan_targets.append(os.path.join(root, f))
+        
+        for fpath in scan_targets:
+            try:
+                with open(fpath, 'r', errors='ignore') as fh:
+                    content = fh.read()
+                result = self.scan(content)
+                if isinstance(result, list):
+                    for finding in findings:
+                        if isinstance(finding, dict):
+                            finding['source_file'] = os.path.relpath(fpath, repo_path)
+                    all_findings.extend(result)
+                scanned_files += 1
+            except Exception:
+                continue
+        
+        # Calculate aggregate score
+        severity_weights = {"critical": 25, "high": 15, "medium": 8, "low": 3, "info": 1}
+        raw_score = sum(severity_weights.get(f.get("severity", "info"), 1) for f in all_findings if isinstance(f, dict))
+        score = min(raw_score, 100)
+        
+        return {
+            "score": score,
+            "severity": "CRITICAL" if score >= 80 else "HIGH" if score >= 60 else "MEDIUM" if score >= 40 else "LOW" if score >= 20 else "SAFE",
+            "scanned_files": scanned_files,
+            "total_findings": len(all_findings),
+            "findings": all_findings,
+        }
+
+    def export_sarif(self, scan_result: dict) -> dict:
+        """Export scan results in SARIF format (industry standard for security tools).
+        
+        SARIF (Static Analysis Results Interchange Format) is used by GitHub CodeQL,
+        Semgrep, and other security tools for standardized reporting.
+        """
+        findings = scan_result.get("findings", [])
+        runs = [{
+            "tool": {
+                "driver": {
+                    "name": "Genesisix",
+                    "version": "2.1.0",
+                    "informationUri": "https://github.com/503496348-ops/genesisix-hermes",
+                    "rules": []
+                }
+            },
+            "results": []
+        }]
+        
+        rule_ids = set()
+        for f in findings:
+            if not isinstance(f, dict):
+                continue
+            rule_id = f.get("rule_id", f.get("type", "unknown"))
+            if rule_id not in rule_ids:
+                runs[0]["tool"]["driver"]["rules"].append({
+                    "id": rule_id,
+                    "name": f.get("type", "Security Finding"),
+                    "shortDescription": {"text": f.get("message", "Security issue detected")},
+                    "defaultConfiguration": {
+                        "level": "error" if f.get("severity") in ["critical", "high"] else "warning"
+                    }
+                })
+                rule_ids.add(rule_id)
+            
+            runs[0]["results"].append({
+                "ruleId": rule_id,
+                "level": "error" if f.get("severity") in ["critical", "high"] else "warning",
+                "message": {"text": f.get("message", "Security issue detected")},
+                "locations": [{
+                    "physicalLocation": {
+                        "artifactLocation": {"uri": f.get("source_file", "unknown")},
+                    }
+                }]
+            })
+        
+        return {"$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json", "version": "2.1.0", "runs": runs}

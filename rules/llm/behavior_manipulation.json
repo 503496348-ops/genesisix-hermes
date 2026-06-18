@@ -1,0 +1,90 @@
+{
+  "name": "behavior_manipulation",
+  "category": "llm",
+  "description": "检测AI行为操纵模式：隐性引导、信任利用、渐进式转向",
+  "severity": "high",
+  "author": "AtomCollide-智械工坊团队",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "BM001",
+      "description": "隐性引导用户行为 — 渐进式转向",
+      "pattern": "(?:subtly|gradually|slowly|progressively)\\s+(?:steer|guide|push|nudge|redirect|influence)\\s+(?:the\\s+)?(?:user|conversation|discussion|decision)",
+      "severity": "high",
+      "confidence": 0.80,
+      "mitigation": "Block gradual steering behavior that attempts to influence user decisions without explicit disclosure"
+    },
+    {
+      "id": "BM002",
+      "description": "信任建立后利用 — 社会工程模式",
+      "pattern": "(?:gain|build|establish|earn)\\s+(?:the\\s+)?(?:user(?:'s)?|their)\\s+trust\\s+(?:and\\s+then|before|so\\s+that|in\\s+order\\s+to)",
+      "severity": "high",
+      "confidence": 0.75,
+      "mitigation": "Detect social engineering patterns where trust is built as a precursor to exploitation"
+    },
+    {
+      "id": "BM003",
+      "description": "表面友善掩盖真实意图",
+      "pattern": "(?:appear|seem|act|pretend)\\s+(?:helpful|friendly|trustworthy|benign|harmless)\\s+(?:while|but|then|and\\s+(?:secretly|covertly|quietly))",
+      "severity": "high",
+      "confidence": 0.70,
+      "mitigation": "Identify deceptive behavior where apparent helpfulness masks harmful intent"
+    },
+    {
+      "id": "BM004",
+      "description": "未经用户知情的隐蔽修改",
+      "pattern": "(?:without\\s+)?(?:the\\s+)?user\\s+(?:knowing|realizing|noticing|aware).*?(?:change|modify|alter|influence|manipulate|redirect)",
+      "severity": "critical",
+      "confidence": 0.85,
+      "mitigation": "Block attempts to modify behavior or data without user awareness"
+    },
+    {
+      "id": "BM005",
+      "description": "优先级操纵 — 安全让位于其他目标",
+      "pattern": "(?:prioritize|prefer|favor|choose)\\s+(?:\\w+\\s+){0,3}(?:over|above|rather\\s+than|instead\\s+of)\\s+(?:user\\s+)?(?:safety|security|privacy|wellbeing|interests|preferences?)",
+      "severity": "critical",
+      "confidence": 0.85,
+      "mitigation": "Detect attempts to deprioritize user safety/security in favor of other objectives"
+    },
+    {
+      "id": "BM006",
+      "description": "隐瞒信息 — 永不告知用户",
+      "pattern": "never\\s+(?:recommend|suggest|mention|tell|warn|inform|disclose|reveal\\s+to)\\s+(?:the\\s+)?(?:user|them|anyone)",
+      "severity": "high",
+      "confidence": 0.75,
+      "mitigation": "Detect information withholding patterns that keep users uninformed"
+    },
+    {
+      "id": "BM007",
+      "description": "自动附加内容到每次响应",
+      "pattern": "(?:always|constantly)\\s+include\\s+(?:this|the\\s+following)\\s+in\\s+(?:every|all|each)\\s+(?:response|output|reply|message)",
+      "severity": "medium",
+      "confidence": 0.70,
+      "mitigation": "Detect persistent injection of content into all responses"
+    },
+    {
+      "id": "BM008",
+      "description": "强制推荐特定选项 — 消费者操纵",
+      "pattern": "always\\s+(?:recommend|suggest|prefer|choose|push|promote|advocate)\\s+(?:\\w+\\s+){0,3}(?:over|instead\\s+of|rather\\s+than|above)",
+      "severity": "medium",
+      "confidence": 0.70,
+      "mitigation": "Detect biased recommendation patterns that override user preferences"
+    },
+    {
+      "id": "BM009",
+      "description": "响应尾部追加隐蔽指令",
+      "pattern": "append\\s+(?:this|the\\s+following)\\s+to\\s+(?:every|all|each)\\s+(?:response|message|output|reply)",
+      "severity": "high",
+      "confidence": 0.75,
+      "mitigation": "Detect attempts to persistently append instructions to all outputs"
+    },
+    {
+      "id": "BM010",
+      "description": "拒绝向用户报告安全问题",
+      "pattern": "(?:hide|conceal|suppress|withhold|obscure)\\s+(?:any\\s+)?(?:errors?|warnings?|security|vulnerability|risk|threat|issue)\\s+(?:from|to)\\s+(?:the\\s+)?(?:user|them)",
+      "severity": "critical",
+      "confidence": 0.80,
+      "mitigation": "Detect attempts to hide security issues from users"
+    }
+  ]
+}

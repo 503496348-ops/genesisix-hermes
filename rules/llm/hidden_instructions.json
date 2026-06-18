@@ -1,0 +1,90 @@
+{
+  "name": "hidden_instructions",
+  "category": "llm",
+  "description": "检测隐藏指令注入：base64编码、零宽字符伪装、HTML注释隐写",
+  "severity": "high",
+  "author": "AtomCollide-智械工坊团队",
+  "version": "1.0.0",
+  "patterns": [
+    {
+      "id": "HI001",
+      "description": "HTML注释中的隐藏指令 — 系统命令",
+      "pattern": "<!--.*?(?:system|instructions?|ignore|POST|GET|send|transmit|execute|override).*?-->",
+      "severity": "high",
+      "confidence": 0.70,
+      "mitigation": "Strip HTML comments before processing; detect instruction-like content in comments"
+    },
+    {
+      "id": "HI002",
+      "description": "Markdown注释中的隐藏指令",
+      "pattern": "\\[//\\]:\\s*#\\s*\\(.*?(?:system|instructions?|ignore|POST|GET|send|transmit|execute).*?\\)",
+      "severity": "high",
+      "confidence": 0.80,
+      "mitigation": "Parse markdown link references for hidden instruction payloads"
+    },
+    {
+      "id": "HI003",
+      "description": "零宽字符注入 — 隐蔽Unicode控制字符",
+      "pattern": "[\\u200b\\u200c\\u200d\\u2060\\ufeff\\u2063\\u2064]",
+      "severity": "medium",
+      "confidence": 0.60,
+      "mitigation": "Strip zero-width and invisible Unicode characters from input"
+    },
+    {
+      "id": "HI004",
+      "description": "Base64数据URI — 编码隐藏指令",
+      "pattern": "data:text/plain;base64,[A-Za-z0-9+/=]{50,}",
+      "severity": "high",
+      "confidence": 0.70,
+      "mitigation": "Detect and decode base64 data URIs; reject encoded instruction payloads"
+    },
+    {
+      "id": "HI005",
+      "description": "Unicode双向覆盖字符 — 文本方向欺骗",
+      "pattern": "[\\u202a-\\u202e\\u2066-\\u2069]",
+      "severity": "medium",
+      "confidence": 0.65,
+      "mitigation": "Detect RTL/LTR override characters used to visually disguise text content"
+    },
+    {
+      "id": "HI006",
+      "description": "同形字替换 — 西里尔/拉丁混淆攻击",
+      "pattern": "[\\u0430\\u0435\\u043e\\u0440\\u0441\\u0443\\u0445\\u0410\\u0415\\u041e\\u0420\\u0421\\u0423\\u0425]",
+      "severity": "medium",
+      "confidence": 0.55,
+      "mitigation": "Normalize confusable Unicode characters to ASCII equivalents before analysis"
+    },
+    {
+      "id": "HI007",
+      "description": "标记字体欺骗 — 数学字母数字符号",
+      "pattern": "[\\U0001d400-\\U0001d7ff]",
+      "severity": "low",
+      "confidence": 0.50,
+      "mitigation": "Detect mathematical alphanumeric symbols used to bypass keyword filters"
+    },
+    {
+      "id": "HI008",
+      "description": "嵌套编码 — 多重编码混淆",
+      "pattern": "(?:%25|%2525|%252525)(?:[0-9a-fA-F]{2}){3,}",
+      "severity": "high",
+      "confidence": 0.75,
+      "mitigation": "Detect and recursively decode multi-layer URL encoding"
+    },
+    {
+      "id": "HI009",
+      "description": "CSS隐藏文本 — display:none/visibility:hidden",
+      "pattern": "(?:display\\s*:\\s*none|visibility\\s*:\\s*hidden|opacity\\s*:\\s*0|font-size\\s*:\\s*0|position\\s*:\\s*absolute.*?left\\s*:-\\d{3,})",
+      "severity": "medium",
+      "confidence": 0.60,
+      "mitigation": "Detect CSS techniques used to hide text content from visual inspection"
+    },
+    {
+      "id": "HI010",
+      "description": "标签属性中的隐藏指令 — alt/title/aria隐藏",
+      "pattern": "(?:alt|title|aria-label|data-)\\s*=\\s*[\"'][^\"']*(?:ignore|override|system|instruction|execute|send)[^\"']*[\"']",
+      "severity": "medium",
+      "confidence": 0.65,
+      "mitigation": "Scan HTML attribute values for instruction-like content"
+    }
+  ]
+}
